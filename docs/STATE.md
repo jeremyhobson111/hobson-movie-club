@@ -1,22 +1,19 @@
 # Current state
 **Last updated:** 2026-11-01
-**Current focus:** Build the survey page (v1 step 1).
+**Current focus:** Survey page is built; waiting on Supabase login setup before the family can use it.
 
 ## Done this session
-- Project created, stack chosen (DEC-001): plain HTML/JS, Supabase, GitHub Pages.
-- Repo made public so Pages works on the free plan. Netlify files removed.
-- Survey spec saved in docs/areas/survey.md (19 questions).
-- Supabase project created and `survey_responses` table applied (RLS on, security advisor clean).
-- Kickoff and schema PRs merged to main. Nothing published; Pages is still off.
+- Built the survey page: email login (link or 6-digit code, invite-only), 19 questions, save/edit per person (js/, css/, index.html).
+- Survey rules have tests (`node --test tests/logic.test.mjs`, 9 passing). Checked the page locally with a mocked database; not yet tried against the real Supabase login.
+- No new dependencies (plain fetch to Supabase). Nothing published; Pages is still off.
 
 ## In progress
-- Branch: `main` (clean)
+- Branch: `main` (survey page merged)
 - Half-done: nothing.
-- To resume: start the survey page (login + 19-question form saving to `survey_responses`).
 
 ## Next steps
-1. Owner: turn off public sign-ups in Supabase Auth, invite family by email.
-2. Build login + survey page, test locally.
+1. Owner, in the Supabase dashboard (Authentication): turn off public sign-ups; under URL Configuration add `http://localhost:8000` as a redirect URL (and the Pages URL later); in Email Templates > Magic Link add `{{ .Token }}` so the email shows the 6-digit code. Then invite yourself and try a real login locally.
+2. Invite family by email.
 3. Poster lookup via TMDB (key goes in a Supabase secret, never in site code).
 4. Ratings and reviews.
 
@@ -24,4 +21,5 @@
 - When to turn on GitHub Pages (needs a safe publish setup first).
 
 ## Deferred housekeeping
-- Add a CHANGELOG line when the first feature ships.
+- Add the survey tests to CI (CI change, needs approval).
+- Record "plain fetch instead of supabase-js" as a DEC entry if you want it logged.
