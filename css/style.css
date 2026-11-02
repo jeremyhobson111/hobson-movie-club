@@ -1,21 +1,28 @@
-:root { --bg: #14161c; --card: #1e212a; --text: #eceef3; --muted: #9aa1b2; --accent: #f5b942; --line: #343947; --err: #ff7a7a; }
+/* Look borrowed from spotle.movie: deep navy, soft white text, gold glowing buttons.
+   System fonts only for now (spotle uses Manrope, which would need a Google Fonts link). */
+:root { --bg: #060b14; --card: #0d1626; --text: #eaf0ff; --muted: #7f8bab; --accent: #f0b13f; --accent2: #d99a2b; --line: #1d2a44; --err: #ff7a7a; }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.5 system-ui, sans-serif; }
-header { display: flex; justify-content: space-between; align-items: center; max-width: 720px; margin: 0 auto; padding: 16px; }
-h1 { font-size: 1.4rem; margin: 0; }
+body { margin: 0; color: var(--text); font: 17px/1.5 "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: radial-gradient(ellipse at top, #0f1c36 0%, var(--bg) 55%) fixed; min-height: 100vh; }
+header { display: flex; justify-content: space-between; align-items: center; max-width: 720px; margin: 0 auto; padding: 20px 16px 8px; }
+h1 { font: 400 1.9rem/1 Impact, "Arial Narrow", sans-serif; letter-spacing: .14em; text-transform: uppercase; margin: 0; }
+h2 { font-weight: 600; letter-spacing: .02em; }
 main { max-width: 720px; margin: 0 auto; padding: 0 16px 64px; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
 fieldset.card { min-inline-size: 0; }
 legend { font-weight: 600; padding: 0 6px; }
 label { display: block; padding: 6px 0; cursor: pointer; }
-label.disabled { opacity: .45; cursor: not-allowed; }
+label.disabled { opacity: .4; cursor: not-allowed; }
 input[type=checkbox], input[type=radio] { margin-right: 8px; accent-color: var(--accent); transform: scale(1.2); }
-input[type=text], input[type=email], textarea { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px; font: inherit; margin: 4px 0; }
+input[type=text], input[type=email], textarea { width: 100%; background: #08101e; color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px; font: inherit; margin: 4px 0; }
+input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 textarea { min-height: 90px; resize: vertical; }
-button { background: var(--accent); color: #1a1300; border: 0; border-radius: 8px; padding: 12px 20px; font: inherit; font-weight: 600; cursor: pointer; }
-button:disabled { opacity: .5; cursor: default; }
-#signout { background: transparent; color: var(--muted); border: 1px solid var(--line); padding: 6px 12px; }
+button { background: linear-gradient(180deg, var(--accent), var(--accent2)); color: #1a1100; border: 0; border-radius: 12px; padding: 14px 28px; font: inherit; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 22px rgba(240, 177, 63, .28); }
+button:hover:not(:disabled) { filter: brightness(1.08); }
+button:disabled { opacity: .5; cursor: default; box-shadow: none; }
+#signout { background: var(--card); color: var(--muted); border: 1px solid var(--line); box-shadow: none; padding: 8px 14px; font-size: .8rem; }
+button.muted { background: transparent; box-shadow: none; text-transform: none; font-weight: 500; letter-spacing: 0; }
 .muted { color: var(--muted); }
 .error { color: var(--err); }
 .hint { color: var(--muted); font-size: .9rem; }
-.sign { font-style: italic; }
+.sign { font-style: italic; color: var(--muted); }
