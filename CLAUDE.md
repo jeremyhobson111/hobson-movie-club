@@ -1,7 +1,7 @@
-# {{PROJECT_NAME}}
+# hobson-movie-club
 
-**Purpose:** {{one or two sentences: what this is and who it is for}}
-**Stack:** {{TBD. If this says TBD, run the kickoff in .claude/rules/00-kickoff.md before writing code.}}
+**Purpose:** A website that manages our family movie club: a survey to learn what people want, then movie picks, ratings and reviews. Family members only.
+**Stack:** Plain HTML/CSS/JavaScript (no build step), Supabase (database + email login), GitHub Pages hosting. See DEC-001.
 **Repo is the source of truth.** Decisions, plans, and state live in files in this repo, never only in chat.
 
 ## Always-loaded context (keep these files short)
@@ -11,7 +11,7 @@
 ## Operating model (details are in .claude/rules/)
 - Work autonomously on code, tests, local servers, feature branches, and docs.
 - Ask before the "formal" actions: new dependency, remote DB migration, CI/config changes, deleting files, tagging, releasing, deploying, anything involving secrets or money.
-- Claude may merge its own PRs to `main` when CI is green and the conditions in 10-autonomy.md are met. Merging is not releasing, and a merge must never publish anything or spend hosting credits (see 80-deploy-netlify-supabase.md).
+- Claude may merge its own PRs to `main` when CI is green and the conditions in 10-autonomy.md are met. Merging is not releasing, and a merge must never publish anything or spend hosting credits (see 80-deploy-github-pages.md).
 - Nothing is released or deployed to production until the user asks ("release", or `release patch|minor|major`, or `release 1.4.0`). Claude picks the version number from the commits since the last release (rules in 50-git-and-releases.md) unless the user gives one.
 - At natural checkpoints, **propose** the formal housekeeping (see 20-checkpoints.md). Do not silently skip it and do not silently do it.
 

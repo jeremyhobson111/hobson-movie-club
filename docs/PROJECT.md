@@ -1,29 +1,34 @@
-# {{PROJECT_NAME}}: project brief
+# hobson-movie-club: project brief
 <!-- Always loaded into every session. Keep under ~60 lines. Facts, not history. -->
 
 ## What it is
-{{2-3 sentences}}
+A website that manages our family movie club. v1 starts with a survey to find out what the family wants the club to be, then adds rating/reviewing watched movies and movie poster/info lookup.
 
 ## Users and goals
-{{who uses it, what they need}}
+Family members only (small group, not public). Each person logs in with email so their answers, ratings and reviews are theirs.
 
 ## Stack
-{{languages, frameworks, hosting, database}}
+- Front end: plain HTML, CSS and JavaScript. No framework, no build step.
+- Data and login: Supabase (Postgres + email login). Project "Hobson Movie Club", ref `bfpjetztwfcwzcjfxakx`, URL https://bfpjetztwfcwzcjfxakx.supabase.co (us-west-1). Auto-expose and auto-RLS settings chosen at creation: expose off, RLS on.
+- Hosting: GitHub Pages (static files).
+- Poster/info lookup: outside movie database, provider not chosen yet (see ROADMAP).
 
 ## Commands
-- Install: `{{...}}`
-- Run locally: `{{...}}`
-- Test: `{{...}}`
-- Lint/format: `{{...}}`
-- Build: `{{...}}`
+- Install: none (no dependencies yet)
+- Run locally: `python -m http.server 8000` from the repo root, then open http://localhost:8000 (TBD once the site exists)
+- Test: none yet (add when there is logic worth testing)
+- Lint/format: none yet
+- Build: none (static files)
 
 ## Areas
-{{list the area names that have docs/areas/<area>.md, one line each}}
+- survey: docs/areas/survey.md (the 19 survey questions)
 
 ## Environments
-- Local: {{...}}
-- Preview: {{e.g. Netlify deploy previews}}
-- Production: {{URL, only changed on release}}
+- Local: static server as above, pointed at the Supabase project
+- Preview: none (GitHub Pages has no previews; test locally)
+- Production: GitHub Pages site for this repo, only changed on release
 
 ## Standing preferences specific to this project
-{{anything Claude should always know that is not a general rule}}
+- Family-only. Keep it simple and friendly; no payments, no public sign-up.
+- Supabase keys in the browser must be the public "anon" key only, with row-level security on every table. Never the service key.
+- Survey questions are in docs/areas/survey.md. Movies must be available on Plex (no Plex integration planned).

@@ -12,7 +12,7 @@
   2. The change is on the roadmap or was requested by the user in this session.
   3. It contains nothing from the "ask first" list below that the user has not approved (new dependency, remote migration, CI/config change, file deletions).
   4. The PR description says what changed and how it was tested.
-  5. Merging will not publish anything. If the project is connected to Netlify or any host that deploys on merge, follow `80-deploy-netlify-supabase.md` first.
+  5. Merging will not publish anything. If the project is connected to GitHub Pages or any host that deploys on merge, follow `80-deploy-github-pages.md` first.
   After merging: switch to `main`, pull, and note it in `docs/STATE.md`. Tell the user in one line that it merged.
 
 ## Ask first (one short question, with your recommendation)
