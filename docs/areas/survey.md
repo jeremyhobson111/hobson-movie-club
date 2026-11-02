@@ -31,3 +31,8 @@ Closing message: "Thanks for taking the time to share your thoughts!" plus the g
 ## Notes for building
 - "All of the above" / "None" options should clear the other boxes in that question.
 - Results page (who answered what) is a likely follow-up; not in v1 unless asked.
+
+## Database
+- Applied to the Supabase project on 2026-11-01. Table `survey_responses` (migration `supabase/migrations/20261101000000_survey_responses.sql`): one row per person, `answers` is JSON keyed by question number ("1".."19").
+- Each person sees and edits only their own row (row-level security). The owner reads everyone's answers in the Supabase dashboard for now; a results page is not in v1.
+- Sign-up should be invite-only (turn off public sign-ups in Supabase Auth settings, invite family by email).
