@@ -9,7 +9,7 @@ Family members only (small group, not public). Each person logs in with email so
 
 ## Stack
 - Front end: plain HTML, CSS and JavaScript. No framework, no build step.
-- Data and login: Supabase (Postgres + email login).
+- Data and login: Supabase (Postgres + email login). Project "Hobson Movie Club", ref `bfpjetztwfcwzcjfxakx`, URL https://bfpjetztwfcwzcjfxakx.supabase.co (us-west-1). Auto-expose and auto-RLS settings chosen at creation: expose off, RLS on.
 - Hosting: GitHub Pages (static files).
 - Poster/info lookup: outside movie database, provider not chosen yet (see ROADMAP).
 
