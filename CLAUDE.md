@@ -1,7 +1,7 @@
 # hobson-movie-club
 
-**Purpose:** {{one or two sentences: what this is and who it is for}}
-**Stack:** {{TBD. If this says TBD, run the kickoff in .claude/rules/00-kickoff.md before writing code.}}
+**Purpose:** A website that manages our family movie club: a survey to learn what people want, then movie picks, ratings and reviews. Family members only.
+**Stack:** Plain HTML/CSS/JavaScript (no build step), Supabase (database + email login), GitHub Pages hosting. See DEC-001.
 **Repo is the source of truth.** Decisions, plans, and state live in files in this repo, never only in chat.
 
 ## Always-loaded context (keep these files short)
