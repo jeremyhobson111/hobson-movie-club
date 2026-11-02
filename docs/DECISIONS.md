@@ -12,5 +12,5 @@
 - **Date:** 2026-11-01
 - **Status:** accepted
 - **Context:** DEC-001 chose GitHub Pages, so the Netlify rule file and config example were dead weight.
-- **Decision:** Deleted `80-deploy-netlify-supabase.md` and `netlify.toml.example`; added a short `80-deploy-github-pages.md` (do not auto-publish on merge). Kept the Netlify lines in `.claude/settings.json` for the owner to decide.
+- **Decision:** Deleted `80-deploy-netlify-supabase.md` and `netlify.toml.example`; added a short `80-deploy-github-pages.md` (do not auto-publish on merge). Also removed the Netlify lines from `.claude/settings.json`.
 - **Visibility:** GitHub Pages on the free plan needs a public repo, so the owner made this repo public on 2026-11-01. Nothing secret is stored in it (the Supabase anon key is public by design). Pages sites are public on the internet, so survey/review data stays in Supabase behind login.

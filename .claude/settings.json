@@ -30,8 +30,6 @@
       "Bash(ruff:*)",
       "Bash(dotnet test:*)",
       "Bash(dotnet build:*)",
-      "Bash(netlify dev:*)",
-      "Bash(netlify build:*)",
       "Bash(supabase start:*)",
       "Bash(supabase status:*)",
       "Bash(gh pr create:*)",
@@ -50,8 +48,6 @@
       "Bash(git rm:*)",
       "Bash(git push origin production:*)",
       "Bash(gh release:*)",
-      "Bash(netlify deploy --prod:*)",
-      "Bash(netlify deploy -p:*)",
       "Bash(supabase db push:*)",
       "Bash(supabase migration:*)"
     ],
