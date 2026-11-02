@@ -1,5 +1,7 @@
 # Area: survey
 
+**Live survey is v2 (13 questions), approved 2026-11-02. Its text is in `js/questions.js` and the rationale in `survey-v2-draft.md`. Everything below about the 19 questions is the original v1 spec, kept for reference; the code and answer shapes now follow v2.**
+
 Source: the family survey written by Dave (pasted by the owner, 2026-11-01). Questions are final text; do not reword without asking. All movie picks are movies available on Plex. Plan is one movie per week.
 
 Intro shown at top: the Hobson Movie Club is making a comeback, wider variety than Oscar nominees (member favorites, genres, highly rated, hidden gems, classics), input wanted on how the club should work. Sign-off: "Dave".
@@ -40,5 +42,5 @@ Closing message: "Thanks for taking the time to share your thoughts!" plus the g
 ## Code (built 2026-11-01)
 - `index.html`, `css/style.css`, `js/`: `questions.js` (the text), `logic.js` (pure rules, tested in `tests/logic.test.mjs`), `supabase.js` (plain fetch, no library), `app.js` (login, form, thank-you).
 - Login: emailed link or 6-digit code, `create_user:false` so only invited people get in. Needs Supabase dashboard setup (see STATE.md next steps).
-- Saved answer shapes, keyed by question number: single = text; multi (1, 3, 11, 16, 17) = `{choices: [...], other: "..."}`; top3 (5) = array of 3; text (18, 19) = text; q2 = array of 3 titles.
-- Only the name is required; question 5 must be exactly three if touched. People can re-open and edit their answers.
+- Saved answer shapes (v2), keyed by question number: single = text; multi (1, 2, 5, 7, 10) = `{choices: [...], other: "..."}`; text (12, 13) = text; q3 = array of 3 titles. `answers._v` is the survey version: answers saved under a different version are ignored and replaced on the next save, so change `SURVEY_VERSION` in `logic.js` whenever the questions change meaning.
+- Only the name is required. People can re-open and edit their answers.

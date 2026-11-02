@@ -1,14 +1,19 @@
 // Pure survey rules (no browser code) so they can be tested with `node --test`.
 
-export const TOP_N = 3;
+// Bump when the questions change, so answers saved for an older survey are not
+// shown against the new questions (they are replaced on the next save).
+export const SURVEY_VERSION = 2;
+
+export function currentAnswers(saved) {
+  return saved?._v === SURVEY_VERSION ? saved : null;
+}
 
 // Answer shapes stored in survey_responses.answers, keyed by question id:
 //   single -> "label"         multi -> { choices: [...], other: "text" }
-//   top3   -> [...]           text  -> "text"        text3 -> ["", "", ""]
+//   text   -> "text"          text3 -> ["", "", ""]
 export function emptyAnswer(q) {
   switch (q.type) {
     case "multi": return { choices: [], other: "" };
-    case "top3": return [];
     case "text3": return ["", "", ""];
     default: return "";
   }
@@ -51,30 +56,18 @@ export function setOther(q, answer, text) {
   return { choices, other: text };
 }
 
-// Tick/untick in a "pick exactly three" question; a fourth tick is ignored.
-export function toggleTop(answer, label, checked) {
-  const rest = answer.filter((c) => c !== label);
-  if (!checked) return rest;
-  return rest.length >= TOP_N ? answer : [...rest, label];
-}
-
-// Returns a list of { id, message } problems. Everything is optional except a
-// name, and question 5 must be exactly three if it is touched at all.
-export function validate(displayName, answers) {
+// Returns a list of { id, message } problems. Everything is optional except a name.
+export function validate(displayName) {
   const problems = [];
   const name = displayName.trim();
   if (!name) problems.push({ id: "name", message: "Please enter your name." });
   if (name.length > 60) problems.push({ id: "name", message: "Name must be 60 characters or fewer." });
-  const top = answers[5] ?? [];
-  if (top.length > 0 && top.length !== TOP_N) {
-    problems.push({ id: 5, message: `Question 5: pick exactly ${TOP_N} (you picked ${top.length}).` });
-  }
   return problems;
 }
 
 // Trim text answers before saving.
 export function cleanAnswers(questions, answers) {
-  const out = {};
+  const out = { _v: SURVEY_VERSION };
   for (const q of questions) {
     const a = answers[q.id];
     if (q.type === "text") out[q.id] = a.trim();

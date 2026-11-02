@@ -11,8 +11,8 @@
 ## Operating model (details are in .claude/rules/)
 - Work autonomously on code, tests, local servers, feature branches, and docs.
 - Ask before the "formal" actions: new dependency, remote DB migration, CI/config changes, deleting files, tagging, releasing, deploying, anything involving secrets or money.
-- Claude may merge its own PRs to `main` when CI is green and the conditions in 10-autonomy.md are met. Merging is not releasing, and a merge must never publish anything or spend hosting credits (see 80-deploy-github-pages.md).
-- Nothing is released or deployed to production until the user asks ("release", or `release patch|minor|major`, or `release 1.4.0`). Claude picks the version number from the commits since the last release (rules in 50-git-and-releases.md) unless the user gives one.
+- **Merging to `main` publishes the site** (GitHub Pages, free, see DEC-003 and 80-deploy-github-pages.md). Claude may merge its own PRs when CI is green and the conditions in 10-autonomy.md are met, but only merges work that is ready for the family to see. Unfinished work stays on its branch.
+- Tags and GitHub releases are optional milestone markers, made only when the user asks ("release", `release patch|minor|major`, `release 1.4.0`). Claude picks the version from the commits since the last release (50-git-and-releases.md) unless the user gives one.
 - At natural checkpoints, **propose** the formal housekeeping (see 20-checkpoints.md). Do not silently skip it and do not silently do it.
 
 ## On-demand context (do NOT @import these; read the one you need)

@@ -2,7 +2,7 @@
 
 ## Branching
 - `main` is always releasable. It changes only through merged PRs.
-- Claude may merge its own PRs when the conditions in `10-autonomy.md` are met. **Merging is not releasing**: a merge must never publish anything or spend hosting credits.
+- Claude may merge its own PRs when the conditions in `10-autonomy.md` are met. **Merging publishes the site** (GitHub Pages, free, DEC-003), so only merge work that is ready to be seen. A tag/release is just a milestone marker and is separate.
 - Work on short-lived branches: `feat/<topic>`, `fix/<topic>`, `chore/<topic>`, `docs/<topic>`.
 - One logical change per PR. Draft PRs are fine while in progress.
 - Use squash merges so `main` has one clean commit per change. Put the PR title in the subject line, in conventional style (below). The version level is worked out from these subjects.
@@ -47,7 +47,7 @@ The highest level wins. Judge by the effect on users, not the size of the diff: 
 1. Make sure `main` is up to date and tests and CI pass.
 2. On a branch `chore/release-v<version>`: move CHANGELOG "Unreleased" entries under the new version heading with today's date, and update the version in the project's manifest (`package.json`, `pyproject.toml`, `*.csproj`, or wherever this project keeps it; see `docs/PROJECT.md`). Open a PR, and merge it once CI is green (this follows the normal merge rules).
 3. Create an annotated tag `v<version>` on the merge commit and push the tag, then create a GitHub release with the changelog section as the notes.
-4. Deploy only if the user also asked for a deploy; follow `80-deploy-github-pages.md`.
+4. Nothing extra to deploy: the merge in step 2 already published the site.
 5. Update `docs/HANDOFF.md` if setup or deploy steps changed, and `docs/STATE.md`.
 6. Report in one or two lines: the version, why that level, and what is in it.
 
