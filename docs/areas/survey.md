@@ -2,7 +2,7 @@
 
 Source: the family survey written by Dave (pasted by the owner, 2026-11-01). Questions are final text; do not reword without asking. All movie picks are movies available on Plex. Plan is one movie per week.
 
-Intro shown at top: the Family Movie Club is making a comeback, wider variety than Oscar nominees (member favorites, genres, highly rated, hidden gems, classics), input wanted on how the club should work. Sign-off: "Dave".
+Intro shown at top: the Hobson Movie Club is making a comeback, wider variety than Oscar nominees (member favorites, genres, highly rated, hidden gems, classics), input wanted on how the club should work. Sign-off: "Dave".
 
 Type key: multi = select all that apply, single = pick one, top3 = pick exactly three, text = free text.
 

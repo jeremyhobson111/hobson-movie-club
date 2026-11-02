@@ -3,7 +3,7 @@
 // `other: true` adds an "Other" text box. `exclusive` lists options that clear all the others.
 
 export const INTRO = [
-  "The Family Movie Club is making a comeback! This time we want a wider variety than just Oscar nominees: member favorites, genres, highly rated films, hidden gems and classics.",
+  "The Hobson Movie Club is making a comeback! This time we want a wider variety than just Oscar nominees: member favorites, genres, highly rated films, hidden gems and classics.",
   "Your input on how the club should work matters, so please take a few minutes. Plan: one movie per week.",
 ];
 export const SIGN_OFF = "Dave";

@@ -148,7 +148,7 @@ async function showSurvey() {
       save.disabled = false; save.textContent = "Try again";
     }
   };
-  show(h("h2", { textContent: "Family Movie Club survey" }), form);
+  show(h("h2", { textContent: "Hobson Movie Club survey" }), form);
 }
 
 function showThanks() {
