@@ -1,4 +1,4 @@
-# {{PROJECT_NAME}}: project brief
+# hobson-movie-club: project brief
 <!-- Always loaded into every session. Keep under ~60 lines. Facts, not history. -->
 
 ## What it is

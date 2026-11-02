@@ -1,4 +1,4 @@
-# {{PROJECT_NAME}}
+# hobson-movie-club
 
 **Purpose:** {{one or two sentences: what this is and who it is for}}
 **Stack:** {{TBD. If this says TBD, run the kickoff in .claude/rules/00-kickoff.md before writing code.}}
