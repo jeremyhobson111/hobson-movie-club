@@ -1,0 +1,17 @@
+# Rename to netlify.toml only if the project is hosted on Netlify. Adjust to the stack.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[dev]
+  # used by `netlify dev`
+  port = 8888
+
+# OPTIONAL (strict mode): block git-triggered PRODUCTION builds so nothing goes live by accident.
+# An ignore command that exits 0 tells Netlify to skip the build. Releases then go through the
+# Netlify CLI or dashboard on the user's say-so. Test this on a throwaway site first, since
+# ignore settings also affect manual builds.
+#
+# [context.production]
+#   ignore = "true"

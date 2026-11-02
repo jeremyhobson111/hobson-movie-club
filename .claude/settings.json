@@ -1,0 +1,70 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git pull --ff-only || echo \"AUTO-PULL FAILED: local and remote have diverged, there is no remote, or there are conflicting local changes. Tell the user and help them resolve it before editing.\""
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git switch:*)",
+      "Bash(git checkout -b:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git pull --ff-only:*)",
+      "Bash(git push -u origin:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run build:*)",
+      "Bash(pytest:*)",
+      "Bash(ruff:*)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet build:*)",
+      "Bash(netlify dev:*)",
+      "Bash(netlify build:*)",
+      "Bash(supabase start:*)",
+      "Bash(supabase status:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr ready:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh run view:*)"
+    ],
+    "ask": [
+      "Bash(npm install:*)",
+      "Bash(pip install:*)",
+      "Bash(dotnet add:*)",
+      "Bash(git merge:*)",
+      "Bash(git tag:*)",
+      "Bash(git rm:*)",
+      "Bash(git push origin production:*)",
+      "Bash(gh release:*)",
+      "Bash(netlify deploy --prod:*)",
+      "Bash(netlify deploy -p:*)",
+      "Bash(supabase db push:*)",
+      "Bash(supabase migration:*)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push origin main:*)",
+      "Bash(git push origin HEAD:main:*)",
+      "Bash(git reset --hard origin:*)",
+      "Bash(rm -rf:*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)"
+    ]
+  }
+}

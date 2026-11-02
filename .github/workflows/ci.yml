@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Required project files exist
+        run: |
+          for f in CLAUDE.md docs/PROJECT.md docs/STATE.md docs/DECISIONS.md CHANGELOG.md .env.example; do
+            test -f "$f" || { echo "Missing $f"; exit 1; }
+          done
+      - name: No env files committed
+        run: |
+          if git ls-files | grep -E '(^|/)\.env($|\.)' | grep -v '\.env\.example$'; then
+            echo "An env file is tracked by git"; exit 1
+          fi
+
+  # Fill this in during kickoff for the chosen stack. Examples:
+  #
+  # test-python:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-python@v5
+  #       with: { python-version: "3.12" }
+  #     - run: pip install -r requirements.txt
+  #     - run: ruff check . && pytest
+  #
+  # test-dotnet:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-dotnet@v4
+  #       with: { dotnet-version: "8.0.x" }
+  #     - run: dotnet test
+  #
+  # test-node:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with: { node-version: 20 }
+  #     - run: npm ci && npm run lint && npm test && npm run build
