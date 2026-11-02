@@ -2,7 +2,7 @@
 <!-- Not auto-loaded. Claude does not build things that are not listed here without asking. -->
 
 ## v1 (definition of done)
-- [ ] Family members can log in with email and complete the club survey (questions in docs/areas/survey.md)
+- [x] Family members can log in with email and complete the club survey (questions in docs/areas/survey.md)
 - [ ] Rate and review movies the club has watched
 - [ ] Movie poster and info shown for each movie (outside lookup service, to be chosen)
 

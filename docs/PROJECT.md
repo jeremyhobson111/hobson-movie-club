@@ -15,8 +15,8 @@ Family members only (small group, not public). Each person logs in with email so
 
 ## Commands
 - Install: none (no dependencies yet)
-- Run locally: `python -m http.server 8000` from the repo root, then open http://localhost:8000 (TBD once the site exists)
-- Test: none yet (add when there is logic worth testing)
+- Run locally: `python -m http.server 8000` from the repo root, then open http://localhost:8000
+- Test: `node --test tests/logic.test.mjs` (survey rules; not yet in CI, needs approval)
 - Lint/format: none yet
 - Build: none (static files)
 

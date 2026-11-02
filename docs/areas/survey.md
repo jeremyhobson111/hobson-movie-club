@@ -36,3 +36,9 @@ Closing message: "Thanks for taking the time to share your thoughts!" plus the g
 - Applied to the Supabase project on 2026-11-01. Table `survey_responses` (migration `supabase/migrations/20261101000000_survey_responses.sql`): one row per person, `answers` is JSON keyed by question number ("1".."19").
 - Each person sees and edits only their own row (row-level security). The owner reads everyone's answers in the Supabase dashboard for now; a results page is not in v1.
 - Sign-up should be invite-only (turn off public sign-ups in Supabase Auth settings, invite family by email).
+
+## Code (built 2026-11-01)
+- `index.html`, `css/style.css`, `js/`: `questions.js` (the text), `logic.js` (pure rules, tested in `tests/logic.test.mjs`), `supabase.js` (plain fetch, no library), `app.js` (login, form, thank-you).
+- Login: emailed link or 6-digit code, `create_user:false` so only invited people get in. Needs Supabase dashboard setup (see STATE.md next steps).
+- Saved answer shapes, keyed by question number: single = text; multi (1, 3, 11, 16, 17) = `{choices: [...], other: "..."}`; top3 (5) = array of 3; text (18, 19) = text; q2 = array of 3 titles.
+- Only the name is required; question 5 must be exactly three if touched. People can re-open and edit their answers.
