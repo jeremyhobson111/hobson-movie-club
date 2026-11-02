@@ -8,7 +8,7 @@
 - No new dependencies (plain fetch to Supabase). Nothing published; Pages is still off.
 
 ## In progress
-- Branch: `feat/survey-page` (PR open)
+- Branch: `main` (survey page merged)
 - Half-done: nothing.
 
 ## Next steps
