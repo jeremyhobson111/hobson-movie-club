@@ -12,7 +12,7 @@
 - Conventional style: `feat: ...`, `fix: ...`, `chore: ...`, `docs: ...`, `refactor: ...`, `test: ...`, `perf: ...`.
 - Mark breaking changes with `!` (for example `feat!: ...`) and a `BREAKING CHANGE:` line in the body explaining what breaks and how to migrate.
 - Before pushing: run the project's test and lint commands (see `docs/PROJECT.md` "Commands").
-- For projects connected to a host that deploys on merge, see `80-deploy-netlify-supabase.md`.
+- For projects connected to a host that deploys on merge, see `80-deploy-github-pages.md`.
 
 ## Rolling back
 - To undo something already on `main`, use `git revert` (a new commit), never history rewriting.
@@ -45,9 +45,9 @@ The highest level wins. Judge by the effect on users, not the size of the diff: 
 
 **Release steps:**
 1. Make sure `main` is up to date and tests and CI pass.
-2. On a branch `chore/release-v<version>`: move CHANGELOG "Unreleased" entries under the new version heading with today's date, and update the version in the project's manifest (`package.json`, `pyproject.toml`, `*.csproj`, or wherever this project keeps it; see `docs/PROJECT.md`). Open a PR, and merge it once CI is green (this follows the normal merge rules, and the commit should carry `[skip netlify]` if the project is connected to Netlify).
+2. On a branch `chore/release-v<version>`: move CHANGELOG "Unreleased" entries under the new version heading with today's date, and update the version in the project's manifest (`package.json`, `pyproject.toml`, `*.csproj`, or wherever this project keeps it; see `docs/PROJECT.md`). Open a PR, and merge it once CI is green (this follows the normal merge rules).
 3. Create an annotated tag `v<version>` on the merge commit and push the tag, then create a GitHub release with the changelog section as the notes.
-4. Deploy only if the user also asked for a deploy; follow `80-deploy-netlify-supabase.md`.
+4. Deploy only if the user also asked for a deploy; follow `80-deploy-github-pages.md`.
 5. Update `docs/HANDOFF.md` if setup or deploy steps changed, and `docs/STATE.md`.
 6. Report in one or two lines: the version, why that level, and what is in it.
 

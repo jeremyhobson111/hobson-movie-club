@@ -21,7 +21,7 @@ Family members only (small group, not public). Each person logs in with email so
 - Build: none (static files)
 
 ## Areas
-(none yet; add docs/areas/<area>.md as the site grows, e.g. survey, reviews)
+- survey: docs/areas/survey.md (the 19 survey questions)
 
 ## Environments
 - Local: static server as above, pointed at the Supabase project
@@ -31,4 +31,4 @@ Family members only (small group, not public). Each person logs in with email so
 ## Standing preferences specific to this project
 - Family-only. Keep it simple and friendly; no payments, no public sign-up.
 - Supabase keys in the browser must be the public "anon" key only, with row-level security on every table. Never the service key.
-- The survey questions are still to come from the owner. Do not invent them.
+- Survey questions are in docs/areas/survey.md. Movies must be available on Plex (no Plex integration planned).
