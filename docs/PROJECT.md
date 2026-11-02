@@ -26,7 +26,7 @@ Family members only (small group, not public). Each person logs in with email so
 ## Environments
 - Local: static server as above, pointed at the Supabase project
 - Preview: none (GitHub Pages has no previews; test locally)
-- Production: GitHub Pages site for this repo, only changed on release
+- Production: GitHub Pages site for this repo. Every merge to `main` publishes it (DEC-003). Planned custom domain: hobsonmovieclub.com
 
 ## Standing preferences specific to this project
 - Family-only. Keep it simple and friendly; no payments, no public sign-up.

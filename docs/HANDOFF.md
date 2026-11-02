@@ -21,7 +21,7 @@ See `.env.example`. Where each is set: {{local .env / Netlify UI / etc.}}
 4. {{run}}
 
 ## Deploy
-{{exact steps, who triggers them, what it costs}}
+Merging a PR to `main` runs `.github/workflows/pages.yml`, which publishes `index.html`, `css/` and `js/` to GitHub Pages (free, public repo). One-time setup: repo Settings > Pages > Source = "GitHub Actions". Custom domain: hobsonmovieclub.com (set in Settings > Pages, plus DNS at the registrar). Supabase Auth > URL Configuration must list the live site address(es) as redirect URLs.
 
 ## Operations
 Backups, monitoring, known issues, recurring tasks.

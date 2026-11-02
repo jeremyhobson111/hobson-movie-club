@@ -1,7 +1,7 @@
 // Page controller: login -> survey form -> thank-you. All text is set with
 // textContent / DOM nodes (never innerHTML) so typed answers can't inject markup.
-import { INTRO, SIGN_OFF, CLOSING, QUESTIONS } from "./questions.js";
-import { normalizeAnswers, toggleChoice, setOther, toggleTop, validate, cleanAnswers, TOP_N } from "./logic.js";
+import { INTRO, CLOSING, QUESTIONS } from "./questions.js";
+import { normalizeAnswers, currentAnswers, toggleChoice, setOther, validate, cleanAnswers } from "./logic.js";
 import * as api from "./supabase.js";
 
 const app = document.getElementById("app");
@@ -84,16 +84,6 @@ function questionNode(q, answers, onChange) {
       };
       fs.append(t);
     }
-  } else if (q.type === "top3") {
-    const picked = answers[q.id];
-    fs.append(h("p", { className: "hint", textContent: `Pick exactly ${TOP_N}. Picked: ${picked.length}` }));
-    for (const opt of q.options) {
-      const on = picked.includes(opt);
-      const full = !on && picked.length >= TOP_N;
-      const c = h("input", { type: "checkbox", checked: on, disabled: full });
-      c.onchange = () => { answers[q.id] = toggleTop(answers[q.id], opt, c.checked); rerender(); };
-      fs.append(h("label", { className: full ? "disabled" : "" }, c, opt));
-    }
   } else if (q.type === "text3") {
     answers[q.id].forEach((v, i) => {
       const t = h("input", { type: "text", placeholder: `Movie ${i + 1}`, value: v, maxLength: 150 });
@@ -120,23 +110,23 @@ async function showSurvey() {
     return showLogin("Your sign-in expired. Please sign in again.");
   }
 
-  const answers = normalizeAnswers(QUESTIONS, row?.answers);
+  const answers = normalizeAnswers(QUESTIONS, currentAnswers(row?.answers));
   const name = h("input", { type: "text", value: row?.display_name ?? "", maxLength: 60, placeholder: "Your name" });
   const error = h("p", { className: "error", role: "alert" });
   const save = h("button", { type: "submit", textContent: row ? "Save my changes" : "Submit my answers" });
 
   const form = h("form", {},
-    h("div", { className: "card" }, INTRO.map((t) => h("p", { textContent: t })), h("p", { className: "sign", textContent: "— " + SIGN_OFF })),
+    h("div", { className: "card" }, INTRO.map((t) => h("p", { textContent: t }))),
     h("div", { className: "card" }, h("label", {}, "Your name (so we know whose answers are whose)", name)),
     QUESTIONS.map((q) => questionNode(q, answers)),
     error, save);
 
   form.onsubmit = async (e) => {
     e.preventDefault();
-    const problems = validate(name.value, answers);
+    const problems = validate(name.value);
     if (problems.length) {
       error.textContent = problems.map((p) => p.message).join(" ");
-      (problems[0].id === "name" ? name : document.getElementById("q" + problems[0].id)).scrollIntoView();
+      name.scrollIntoView();
       return;
     }
     error.textContent = ""; save.disabled = true; save.textContent = "Saving…";
@@ -154,7 +144,7 @@ async function showSurvey() {
 function showThanks() {
   const again = h("button", { type: "button", textContent: "Review or change my answers" });
   again.onclick = showSurvey;
-  show(h("div", { className: "card" }, CLOSING.map((t) => h("p", { textContent: t })), h("p", { className: "sign", textContent: "— " + SIGN_OFF })), again);
+  show(h("div", { className: "card" }, CLOSING.map((t) => h("p", { textContent: t }))), again);
 }
 
 // ---------- start ----------
