@@ -13,7 +13,9 @@ h2 { font: 600 1.4rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: .02
 main { max-width: 720px; margin: 0 auto; padding: 0 16px 64px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
 fieldset.card { min-inline-size: 0; }
-legend { font-weight: 600; padding: 0 6px; }
+/* Floating the legend makes it sit inside the card instead of straddling the top border. */
+legend { float: left; width: 100%; padding: 0 0 10px; font-weight: 600; }
+legend + * { clear: both; }
 label { display: block; padding: 6px 0; cursor: pointer; }
 label.disabled { opacity: .4; cursor: not-allowed; }
 input[type=checkbox], input[type=radio] { margin-right: 8px; accent-color: var(--accent); transform: scale(1.2); }
