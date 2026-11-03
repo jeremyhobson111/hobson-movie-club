@@ -6,6 +6,7 @@
 - Survey page built, restyled (navy/gold like spotle.movie), renamed Hobson Movie Club, and switched to the shorter v2 survey (13 questions). Real login works locally.
 - DEC-003: every merge to `main` now publishes to GitHub Pages. Rules (CLAUDE.md, 10-autonomy, 50-git, 80-deploy) updated; workflow `.github/workflows/pages.yml` added.
 - Tests: `node --test tests/logic.test.mjs` (10 passing).
+- Logo banner and icons added (img/). Icons 192/512 are ready for the future phone-app install. Original artwork is untracked in .stuff/ (not committed).
 
 ## In progress
 - Branch: `main` (after this PR merges). Pages is NOT on yet, so the first publish run will fail until the owner does step 1 below.
