@@ -41,6 +41,6 @@ Closing message: "Thanks for taking the time to share your thoughts!" plus the g
 
 ## Code (built 2026-11-01)
 - `index.html`, `css/style.css`, `js/`: `questions.js` (the text), `logic.js` (pure rules, tested in `tests/logic.test.mjs`), `supabase.js` (plain fetch, no library), `app.js` (login, form, thank-you).
-- Login: emailed link or 6-digit code, `create_user:false` so only invited people get in. Needs Supabase dashboard setup (see STATE.md next steps).
+- Login: emailed link or numeric code, `create_user:false` so only invited people get in. Needs Supabase dashboard setup (see STATE.md next steps).
 - Saved answer shapes (v2), keyed by question number: single = text; multi (1, 2, 5, 7, 10) = `{choices: [...], other: "..."}`; text (12, 13) = text; q3 = array of 3 titles. `answers._v` is the survey version: answers saved under a different version are ignored and replaced on the next save, so change `SURVEY_VERSION` in `logic.js` whenever the questions change meaning.
 - Only the name is required. People can re-open and edit their answers.

@@ -41,7 +41,7 @@ function toSession(d) {
   return { access_token: d.access_token, refresh_token: d.refresh_token, user_id: d.user?.id, email: d.user?.email };
 }
 
-// Emails a login link + 6-digit code. create_user:false keeps it invite-only.
+// Emails a login link + a numeric code (its length is a Supabase setting, so no digit count is shown to people). create_user:false keeps it invite-only.
 export function sendLoginEmail(email) {
   const redirect = encodeURIComponent(location.origin + location.pathname);
   return call(`/auth/v1/otp?redirect_to=${redirect}`, { method: "POST", body: { email, create_user: false } });
