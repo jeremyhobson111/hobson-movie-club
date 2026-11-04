@@ -55,7 +55,8 @@ function showSearch(prefill = "") {
   input.oninput = () => { clearTimeout(timer); timer = setTimeout(run, 350); };
   app.replaceChildren(
     h("h2", { textContent: "Movie lookup" }),
-    mock ? h("p", { className: "hint", textContent: "Mock mode: sample data only. Try searching “parasite” or “schindler”." }) : null,
+    // replaceChildren turns null into the text "null", so only pass real nodes.
+    ...(mock ? [h("p", { className: "hint", textContent: "Mock mode: sample data only. Try searching “parasite” or “schindler”." })] : []),
     input, results);
   if (prefill) run(); else input.focus();
 }
