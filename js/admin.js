@@ -4,8 +4,8 @@ import { h } from "./dom.js";
 import * as api from "./supabase.js";
 import { QUESTIONS } from "./questions.js";
 import { liveRows, summarize, describe } from "./results.js";
-import { cleanPlexUsername, memberRows, plexErrorMessage } from "./members.js";
-import { MOCK_ROWS, MOCK_MEMBERS, MOCK_PLEX } from "./admin-mock.js";
+import { cleanPlexName, memberRows, activityRows, plexErrorMessage } from "./members.js";
+import { MOCK_ROWS, MOCK_MEMBERS, MOCK_PLEX, MOCK_EVENTS } from "./admin-mock.js";
 
 const app = document.getElementById("app");
 const mock = new URLSearchParams(location.search).has("mock");
@@ -26,13 +26,14 @@ function realStore(session) {
     async load() {
       const [members, plex, survey] = await Promise.all([
         call("members?select=user_id,email,display_name&order=created_at"),
-        call("plex_accounts?select=id,member_id,plex_username,label&order=id"),
+        call("plex_accounts?select=id,member_id,plex_name,plex_user_id,label&order=id"),
         call("survey_responses?select=user_id,display_name,answers,updated_at&order=updated_at.desc"),
       ]);
       return { members, plex, survey };
     },
-    async addPlex(member_id, plex_username, label) {
-      const rows = await call("plex_accounts", { method: "POST", headers: { Prefer: "return=representation" }, body: { member_id, plex_username, label } });
+    loadEvents: () => call("plex_events?select=id,received_at,event,plex_account_id,plex_account_title,media_title,tmdb_id&order=received_at.desc&limit=30"),
+    async addPlex(member_id, plex_name, label) {
+      const rows = await call("plex_accounts", { method: "POST", headers: { Prefer: "return=representation" }, body: { member_id, plex_name, label } });
       return rows[0];
     },
     removePlex: (id) => call(`plex_accounts?id=eq.${id}`, { method: "DELETE" }),
@@ -42,13 +43,14 @@ function realStore(session) {
 
 // Behaves like the real database: the page gets its own copy of the data and updates it itself.
 function mockStore() {
-  const db = { members: structuredClone(MOCK_MEMBERS), plex: structuredClone(MOCK_PLEX), survey: MOCK_ROWS };
+  const db = { members: structuredClone(MOCK_MEMBERS), plex: structuredClone(MOCK_PLEX), survey: MOCK_ROWS, events: MOCK_EVENTS };
   let nextId = 100;
   return {
-    load: async () => structuredClone(db),
-    async addPlex(member_id, plex_username, label) {
-      if (db.plex.some((p) => p.member_id === member_id && p.plex_username.toLowerCase() === plex_username.toLowerCase())) throw Object.assign(new Error("duplicate"), { status: 409 });
-      const row = { id: nextId++, member_id, plex_username, label };
+    load: async () => ({ members: structuredClone(db.members), plex: structuredClone(db.plex), survey: db.survey }),
+    loadEvents: async () => structuredClone(db.events),
+    async addPlex(member_id, plex_name, label) {
+      if (db.plex.some((p) => p.member_id === member_id && p.plex_name.toLowerCase() === plex_name.toLowerCase())) throw Object.assign(new Error("duplicate"), { status: 409 });
+      const row = { id: nextId++, member_id, plex_name, label };
       db.plex.push(row);
       return { ...row };
     },
@@ -113,22 +115,22 @@ function memberCard(row, store, data, redraw) {
   const run = async (fn) => { msg.textContent = ""; try { await fn(); redraw(); } catch (e) { msg.textContent = plexErrorMessage(e); } };
 
   const accounts = row.plex.map((p) => {
-    const rm = h("button", { type: "button", className: "ghost small", textContent: "Remove", ariaLabel: `Remove ${p.plex_username}` });
+    const rm = h("button", { type: "button", className: "ghost small", textContent: "Remove", ariaLabel: `Remove ${p.plex_name}` });
     rm.onclick = () => run(async () => { await store.removePlex(p.id); data.plex = data.plex.filter((x) => x.id !== p.id); });
     return h("div", { className: "plex-row" }, h("span", {},
-      h("strong", { textContent: p.plex_username }),
+      h("strong", { textContent: p.plex_name }),
       p.label ? h("span", { className: "muted", textContent: ` · ${p.label}` }) : null,
       p.sharedWith.length ? h("span", { className: "shared", textContent: ` · shared with ${p.sharedWith.join(", ")}` }) : null), rm);
   });
 
-  const user = h("input", { type: "text", placeholder: "Plex username", maxLength: 100, ariaLabel: "Plex username" });
+  const user = h("input", { type: "text", placeholder: "Plex username or display name", maxLength: 100, ariaLabel: "Plex username or display name" });
   const label = h("input", { type: "text", placeholder: "Note, e.g. spouse's account (optional)", maxLength: 60, ariaLabel: "Note" });
   const add = h("button", { type: "submit", textContent: "Link account" });
   const form = h("form", { className: "plex-add" }, user, label, add);
   form.onsubmit = (e) => {
     e.preventDefault();
-    const name = cleanPlexUsername(user.value);
-    if (!name) { msg.textContent = "Enter a Plex username."; return; }
+    const name = cleanPlexName(user.value);
+    if (!name) { msg.textContent = "Enter a Plex username or display name."; return; }
     run(() => store.addPlex(row.member.user_id, name, label.value.trim() || null).then((r) => data.plex.push(r)));
   };
 
@@ -151,10 +153,30 @@ function membersView(store, data) {
   const redraw = () => {
     const rows = memberRows(data.members, data.survey, data.plex);
     box.replaceChildren(
-      h("p", { className: "hint", textContent: `${rows.length} ${rows.length === 1 ? "member" : "members"}. Link every Plex account a member watches on. Two people who share one account each get it linked, and a finished movie there alerts both. Matching ignores upper/lower case.` }),
+      h("p", { className: "hint", textContent: `${rows.length} ${rows.length === 1 ? "member" : "members"}. Link every Plex account a member watches on, using its username, or the display name for managed users. Two people who share one account each get it linked, and a finished movie there alerts both. Matching ignores upper/lower case.` }),
       ...rows.map((r) => memberCard(r, store, data, redraw)));
   };
   redraw();
+  return box;
+}
+
+// ---------- Plex activity ----------
+const EVENT_LABEL = { "media.play": "started", "media.scrobble": "finished" };
+
+function activityView(store, data) {
+  const box = h("div", {}, h("p", { className: "muted", textContent: "Loading…" }));
+  store.loadEvents().then((events) => {
+    const rows = activityRows(events, memberRows(data.members, data.survey, data.plex));
+    box.replaceChildren(
+      h("p", { className: "hint", textContent: "The last 30 movies started or finished on your Plex server, as reported by the Plex webhook. “Not linked” means no member has that Plex name linked yet." }),
+      ...(rows.length ? rows.map((e) => card(
+        h("p", { className: "q-title", textContent: e.media_title ?? "(unknown movie)" }),
+        h("p", { className: "q-meta", textContent: `${EVENT_LABEL[e.event] ?? e.event} · ${new Date(e.received_at).toLocaleString()}` }),
+        h("p", {}, h("strong", { textContent: e.plex_account_title ?? "(no name)" }),
+          h("span", { className: "muted", textContent: e.plex_account_id != null ? ` · Plex id ${e.plex_account_id}` : "" }),
+          " → ", e.members.length ? e.members.join(", ") : h("span", { className: "shared", textContent: "Not linked" }))))
+        : [card(h("p", { className: "who", textContent: "Nothing yet. Once the Plex webhook is set up, movies started or finished on your server appear here." }))]));
+  }).catch(() => box.replaceChildren(card(h("p", { className: "error", textContent: "Couldn't load Plex activity." }))));
   return box;
 }
 
@@ -163,9 +185,9 @@ function showAdmin(store, data) {
   let section = "results";
   const tabs = h("div");
   const body = h("div");
-  const views = { results: () => resultsView(data.survey), members: () => membersView(store, data) };
+  const views = { results: () => resultsView(data.survey), members: () => membersView(store, data), activity: () => activityView(store, data) };
   const draw = () => {
-    tabs.replaceChildren(tabRow([["results", "Survey results"], ["members", "Members & Plex"]], section, (k) => { section = k; draw(); }));
+    tabs.replaceChildren(tabRow([["results", "Survey results"], ["members", "Members & Plex"], ["activity", "Plex activity"]], section, (k) => { section = k; draw(); }));
     body.replaceChildren(views[section]());
   };
   draw();

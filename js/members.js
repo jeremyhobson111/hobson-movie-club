@@ -1,9 +1,9 @@
 // Member list helpers for the admin page. Pure (no browser code) so they can be tested with `node --test`.
 import { SURVEY_VERSION } from "./logic.js";
 
-// Plex usernames are matched ignoring case, so store them trimmed and without a leading "@".
-// Returns the cleaned name, or null if there is nothing usable.
-export function cleanPlexUsername(input) {
+// Plex names (a username, or a managed user's display name) are matched ignoring case, so store them
+// trimmed and without a leading "@". Returns the cleaned name, or null if there is nothing usable.
+export function cleanPlexName(input) {
   const name = String(input ?? "").trim().replace(/^@+/, "").trim();
   return name && name.length <= 100 ? name : null;
 }
@@ -18,7 +18,7 @@ export function memberLabel(member, surveyName) {
 export function memberRows(members, surveyRows, plexAccounts) {
   const survey = new Map(surveyRows.map((r) => [r.user_id, r]));
   const labels = new Map(members.map((m) => [m.user_id, memberLabel(m, survey.get(m.user_id)?.display_name)]));
-  const key = (p) => p.plex_username.toLowerCase();
+  const key = (p) => p.plex_name.toLowerCase();
   return members.map((m) => ({
     member: m,
     label: labels.get(m.user_id),
@@ -32,7 +32,20 @@ export function memberRows(members, surveyRows, plexAccounts) {
   }));
 }
 
+// Recent Plex events, each with the club members whose linked Plex name matches the account that
+// triggered it (empty = nobody linked yet). `rows` comes from memberRows().
+export function activityRows(events, rows) {
+  const byName = new Map();
+  for (const r of rows) {
+    for (const p of r.plex) {
+      const k = p.plex_name.toLowerCase();
+      byName.set(k, [...(byName.get(k) ?? []), r.label]);
+    }
+  }
+  return events.map((e) => ({ ...e, members: byName.get((e.plex_account_title ?? "").toLowerCase()) ?? [] }));
+}
+
 // Turn the database's "already linked" error into plain words.
 export function plexErrorMessage(err) {
-  return err?.status === 409 ? "This member already has that Plex username linked." : `Couldn't save: ${err?.message ?? "unknown error"}`;
+  return err?.status === 409 ? "This member already has that Plex name linked." : `Couldn't save: ${err?.message ?? "unknown error"}`;
 }
