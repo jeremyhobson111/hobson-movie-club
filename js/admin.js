@@ -47,7 +47,7 @@ function mockStore() {
   return {
     load: async () => structuredClone(db),
     async addPlex(member_id, plex_username, label) {
-      if (db.plex.some((p) => p.plex_username.toLowerCase() === plex_username.toLowerCase())) throw Object.assign(new Error("duplicate"), { status: 409 });
+      if (db.plex.some((p) => p.member_id === member_id && p.plex_username.toLowerCase() === plex_username.toLowerCase())) throw Object.assign(new Error("duplicate"), { status: 409 });
       const row = { id: nextId++, member_id, plex_username, label };
       db.plex.push(row);
       return { ...row };
@@ -115,7 +115,10 @@ function memberCard(row, store, data, redraw) {
   const accounts = row.plex.map((p) => {
     const rm = h("button", { type: "button", className: "ghost small", textContent: "Remove", ariaLabel: `Remove ${p.plex_username}` });
     rm.onclick = () => run(async () => { await store.removePlex(p.id); data.plex = data.plex.filter((x) => x.id !== p.id); });
-    return h("div", { className: "plex-row" }, h("span", {}, h("strong", { textContent: p.plex_username }), p.label ? h("span", { className: "muted", textContent: ` · ${p.label}` }) : null), rm);
+    return h("div", { className: "plex-row" }, h("span", {},
+      h("strong", { textContent: p.plex_username }),
+      p.label ? h("span", { className: "muted", textContent: ` · ${p.label}` }) : null,
+      p.sharedWith.length ? h("span", { className: "shared", textContent: ` · shared with ${p.sharedWith.join(", ")}` }) : null), rm);
   });
 
   const user = h("input", { type: "text", placeholder: "Plex username", maxLength: 100, ariaLabel: "Plex username" });
@@ -148,7 +151,7 @@ function membersView(store, data) {
   const redraw = () => {
     const rows = memberRows(data.members, data.survey, data.plex);
     box.replaceChildren(
-      h("p", { className: "hint", textContent: `${rows.length} ${rows.length === 1 ? "member" : "members"}. Link every Plex account a member watches on (for example a spouse's), so a finished movie there alerts the right person. Matching ignores upper/lower case.` }),
+      h("p", { className: "hint", textContent: `${rows.length} ${rows.length === 1 ? "member" : "members"}. Link every Plex account a member watches on. Two people who share one account each get it linked, and a finished movie there alerts both. Matching ignores upper/lower case.` }),
       ...rows.map((r) => memberCard(r, store, data, redraw)));
   };
   redraw();

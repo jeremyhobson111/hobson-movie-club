@@ -14,20 +14,25 @@ export function memberLabel(member, surveyName) {
 }
 
 // One row per member for the admin table: label, survey status, and their linked Plex accounts.
+// Each account also lists the OTHER members sharing that username (couples on one account).
 export function memberRows(members, surveyRows, plexAccounts) {
   const survey = new Map(surveyRows.map((r) => [r.user_id, r]));
-  return members.map((m) => {
-    const s = survey.get(m.user_id);
-    return {
-      member: m,
-      label: memberLabel(m, s?.display_name),
-      answered: s?.answers?._v === SURVEY_VERSION,
-      plex: plexAccounts.filter((p) => p.member_id === m.user_id),
-    };
-  });
+  const labels = new Map(members.map((m) => [m.user_id, memberLabel(m, survey.get(m.user_id)?.display_name)]));
+  const key = (p) => p.plex_username.toLowerCase();
+  return members.map((m) => ({
+    member: m,
+    label: labels.get(m.user_id),
+    answered: survey.get(m.user_id)?.answers?._v === SURVEY_VERSION,
+    plex: plexAccounts
+      .filter((p) => p.member_id === m.user_id)
+      .map((p) => ({
+        ...p,
+        sharedWith: plexAccounts.filter((o) => o.member_id !== m.user_id && key(o) === key(p)).map((o) => labels.get(o.member_id)),
+      })),
+  }));
 }
 
 // Turn the database's "already linked" error into plain words.
 export function plexErrorMessage(err) {
-  return err?.status === 409 ? "That Plex username is already linked to a member." : `Couldn't save: ${err?.message ?? "unknown error"}`;
+  return err?.status === 409 ? "This member already has that Plex username linked." : `Couldn't save: ${err?.message ?? "unknown error"}`;
 }

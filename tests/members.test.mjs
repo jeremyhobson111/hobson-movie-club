@@ -33,14 +33,30 @@ test("memberRows joins survey status and Plex accounts per member", () => {
   const plex = [
     { id: 1, member_id: "a", plex_username: "alex" },
     { id: 2, member_id: "a", plex_username: "alexs_wife" },
+    { id: 3, member_id: "c", plex_username: "ALEX" }, // a couple sharing one account
   ];
   const rows = memberRows(members, survey, plex);
   assert.deepEqual(rows.map((r) => r.label), ["Alex", "Bea", "c@x.co"]);
   assert.deepEqual(rows.map((r) => r.answered), [true, false, false]);
-  assert.deepEqual(rows.map((r) => r.plex.length), [2, 0, 0]);
+  assert.deepEqual(rows.map((r) => r.plex.length), [2, 0, 1]);
+});
+
+test("a Plex username shared by two members lists the other member, ignoring case", () => {
+  const members = [
+    { user_id: "a", display_name: "Alex", email: "" },
+    { user_id: "c", display_name: "Chris", email: "" },
+  ];
+  const plex = [
+    { id: 1, member_id: "a", plex_username: "alex" },
+    { id: 2, member_id: "a", plex_username: "alexs_wife" },
+    { id: 3, member_id: "c", plex_username: "ALEX" },
+  ];
+  const [alex, chris] = memberRows(members, [], plex);
+  assert.deepEqual(alex.plex.map((p) => p.sharedWith), [["Chris"], []]);
+  assert.deepEqual(chris.plex[0].sharedWith, ["Alex"]);
 });
 
 test("plexErrorMessage explains a duplicate in plain words", () => {
-  assert.match(plexErrorMessage({ status: 409 }), /already linked/);
+  assert.match(plexErrorMessage({ status: 409 }), /already has that Plex username/);
   assert.match(plexErrorMessage({ status: 500, message: "boom" }), /boom/);
 });

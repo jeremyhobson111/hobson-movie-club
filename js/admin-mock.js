@@ -30,4 +30,5 @@ export const MOCK_MEMBERS = [
 export const MOCK_PLEX = [
   { id: 1, member_id: "u-alex", plex_username: "alexwatches", label: "Main account" },
   { id: 2, member_id: "u-alex", plex_username: "alexs_spouse", label: "Spouse's account" },
+  { id: 3, member_id: "u-dana", plex_username: "AlexS_Spouse", label: "Shared with Alex" }, // a couple on one account
 ];

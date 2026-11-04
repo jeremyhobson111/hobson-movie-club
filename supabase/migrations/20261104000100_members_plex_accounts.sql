@@ -1,6 +1,7 @@
 -- Members: one row per invited person (mirrors the login list, which the website cannot read).
--- Plex accounts: which Plex usernames count as which member (a spouse's account can point
--- to the same member), so "finished watching" alerts can find the right person later.
+-- Plex accounts: which Plex usernames count as which member, so "finished watching" alerts can
+-- find the right people later. Many-to-many: a member can have several Plex accounts, and one
+-- shared account (a couple) can be linked to several members.
 
 create table public.members (
   user_id      uuid primary key references auth.users (id) on delete cascade,
@@ -60,8 +61,8 @@ from auth.users u
 left join public.survey_responses sr on sr.user_id = u.id
 on conflict (user_id) do nothing;
 
--- Plex usernames linked to members. One Plex username can belong to only one member
--- (case does not matter); a member can have several.
+-- Plex usernames linked to members. The same username may be linked to several members,
+-- but only once per member (case does not matter).
 create table public.plex_accounts (
   id            bigint generated always as identity primary key,
   member_id     uuid not null references public.members (user_id) on delete cascade,
@@ -70,8 +71,9 @@ create table public.plex_accounts (
   created_at    timestamptz not null default now()
 );
 
-create unique index plex_accounts_username_unique on public.plex_accounts (lower(plex_username));
-create index plex_accounts_member_idx on public.plex_accounts (member_id);
+create unique index plex_accounts_member_username_unique on public.plex_accounts (member_id, lower(plex_username));
+-- For finding every member linked to a username when a Plex alert comes in.
+create index plex_accounts_username_idx on public.plex_accounts (lower(plex_username));
 
 alter table public.plex_accounts enable row level security;
 
