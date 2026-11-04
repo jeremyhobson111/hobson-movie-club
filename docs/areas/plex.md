@@ -19,3 +19,8 @@ By the Plex **name** in the event (`Account.title`), ignoring case: a username f
 ## Next
 - Pull the full Plex user list from plex.tv (owner token as secret `PLEX_TOKEN`) so members can be linked by picking from it; confirm how its ids relate to the webhook's.
 - Notification once per member per movie (a dedupe table), then reminders; delivery is push (PWA), not email.
+
+## Gotchas
+- This project does not auto-expose new tables, so **every table a function writes needs an explicit grant to `service_role`** (it is not enough that the role bypasses row-level security). `plex_events` got this wrong at first: the receiver answered 500 until `20261104000300_plex_events_service_role_grant.sql`. When testing a function's database write, test as `service_role`, not as the table owner.
+- Supabase writes the whole request address, including `?key=...`, into its logs. Rotate `PLEX_WEBHOOK_SECRET` (and the address in Plex) if it may have been seen; hide it when reading logs (`replaceRegexpOne(event_message, 'key=[^ "]*', 'key=HIDDEN')`).
+- Plex sends `media.play` when a movie starts, `media.stop` when it stops, and `media.scrobble` once it is watched past ~90%. Many other events (library updates, on-deck) arrive too and are ignored.
