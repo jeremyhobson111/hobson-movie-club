@@ -27,7 +27,7 @@ export const QUESTIONS = [
   { id: 6, type: "single", text: "How often did you actually watch the week's movie?",
     options: ["Almost every week", "About half the weeks", "Only now and then", "Hardly ever"] },
   { id: 7, type: "multi", other: true, text: "What usually got in the way?",
-    options: ["Not enough time", "The movie didn't interest me", "I forgot", "Couldn't easily find or watch it", "Nothing happened if I skipped it"] },
+    options: ["Not enough time", "The movie didn't interest me", "I forgot", "Nothing happened if I skipped it"] },
   { id: 8, type: "single", text: "How often would you realistically take part now?",
     options: ["Every week", "Every two weeks", "Once a month", "Whenever my schedule allows"] },
   { id: 9, type: "single", text: "Would you like a points game? Points for watching and rating, plus bonus points when others rate your pick highly.",

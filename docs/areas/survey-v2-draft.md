@@ -10,7 +10,7 @@ Intro: Hobson Movie Club is coming back as an app on your phone. Old way: each w
 4. How open are you to movies you have never heard of? (single, same 4 options as before)
 5. What did you enjoy MOST about the old club? (multi) Reason to get together as a family; Not knowing what the movie would be; Discovering movies I'd never have watched; Choosing from the list when it was my turn; Rating the movie; Seeing everyone's ratings; The debates and disagreements
 6. How often did you actually watch the week's movie? (single) Almost every week; About half the weeks; Only now and then; Hardly ever
-7. What usually got in the way? (multi) Not enough time; The movie didn't interest me; I forgot; Couldn't easily find or watch it; Nothing happened if I skipped it; Other
+7. What usually got in the way? (multi) Not enough time; The movie didn't interest me; I forgot; Nothing happened if I skipped it; Other
 8. How often would you realistically take part now? (single) Every week; Every two weeks; Once a month; Whenever my schedule allows
 9. Would you like a points game? Points for watching and rating, bonus points when others rate your pick highly. (single) Love it; Sounds fun; Don't care either way; I'd rather not have scoring
 10. What should the points winner get? (multi) Bragging rights; Pick the next movie night's theme; A small cash pot everyone chips into; Their name in a hall of fame; Nothing, the points are enough; Other
