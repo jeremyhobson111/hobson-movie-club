@@ -1,9 +1,11 @@
 # Area: admin (owner-only page)
 
-**Status:** v1 = survey results, live (migration applied 2026-11-04). Plex account linking comes next (see STATE.md).
+**Status:** survey results live (migration applied 2026-11-04). Members & Plex section live (migration `20261104000100` applied 2026-11-04, DEC-007). Plex account linking comes next (see STATE.md).
 
 ## Files
 - `admin.html`, `js/admin.js`, `css/admin.css`: the page (unlisted, noindex, no link from other pages). `admin.html?mock=1` shows it with made-up data (`js/admin-mock.js`).
+- `js/members.js` (+ `tests/members.test.mjs`): member rows, Plex username cleaning, friendly error text.
+- `supabase/migrations/20261104000100_members_plex_accounts.sql`: `members` + `plex_accounts` tables and policies (DEC-007).
 - `js/results.js` (+ `tests/results.test.mjs`): turns survey rows into per-question counts, quotes and favorite-movie tallies. Only rows for the current `SURVEY_VERSION` are counted.
 - `supabase/migrations/20261104000000_admin.sql`: `admins` table + policy letting admins read all survey rows (DEC-006).
 

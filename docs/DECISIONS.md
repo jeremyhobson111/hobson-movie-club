@@ -46,3 +46,11 @@
 - **Decision:** A table `admins (user_id)` lists admins. Row-level security lets a signed-in person see only their own row there (how the page asks "am I an admin?"), and an extra policy lets admins read all `survey_responses`. No API write access to `admins`: the owner adds themselves once in the Supabase SQL editor. The page `admin.html` only chooses what to show; the database enforces access.
 - **Alternatives considered:** Hiding the page or checking an email in JavaScript (rejected: not real protection); a service-role Edge Function (more moving parts than a policy).
 - **Consequences:** Admins can read, not edit, other people's answers. Plex linking will add more admin-only tables the same way.
+
+## DEC-007: Members table and linked Plex accounts
+- **Date:** 2026-11-04
+- **Status:** accepted. Migration applied 2026-11-04 with the owner's approval. Checked in the database: a new login gets a member row (trigger); an admin sees everyone and can link and rename; a member sees only their own row and no Plex links and cannot change anything; a stranger sees nothing; the same member plus the same username twice is refused; the same username on two members is allowed.
+- **Context:** Plex "finished watching" alerts need to know which club member a Plex username belongs to, including alternate accounts such as a spouse's. The website cannot read the login list.
+- **Decision:** `members` (one row per login, filled by a trigger on `auth.users`, backfilled for existing people) and `plex_accounts` (many-to-many: a member can have several Plex usernames, and one shared username, e.g. a couple's account, can be linked to several members; once per member, case-insensitive). An alert for a shared account goes to every member linked to it. Admins manage both from the admin page. A member can read only their own `members` row; `plex_accounts` is admin-only for now.
+- **Alternatives considered:** Putting a Plex username column on the survey row (rejected: only one account per person, and not every member answers the survey); linking by Plex numeric account id (kept for later; the username is what the owner can type today, and the webhook field to match will be confirmed when the webhook is built).
+- **Consequences:** The `auth.users` trigger is the only place `members` rows are created. Deleting a login deletes the member and their links.

@@ -17,5 +17,6 @@ All notable changes. Format based on Keep a Changelog; versions follow semver.
 - Favicon is now a true circle with a transparent outside; app icons are the circle centered on a dark square.
 - Daily keep-alive job so the Supabase free plan does not pause the project.
 - Admin page (admin.html, owner only): survey results by question and by person. Needs the admin database change applied (DEC-006).
+- Admin "Members & Plex" section: link Plex usernames (several per member) to members; rename members.
 - Survey replaced with the shorter v2 (13 questions about the old club, a points game and a phone app).
 - Site now publishes to GitHub Pages on every merge to `main` (DEC-003).

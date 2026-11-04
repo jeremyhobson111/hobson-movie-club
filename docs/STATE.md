@@ -17,6 +17,9 @@
 ## Admin page
 - `admin.html` is live once merged: survey results by question and by person. Migration applied, owner is the first admin (DEC-006).
 
+## Members & Plex (done)
+- Admin "Members & Plex" section: link Plex usernames to members (several per member; one shared account can go to several members, e.g. a couple). Migration applied (DEC-007). Next: Plex webhook receiver that alerts every member linked to the account.
+
 ## Next steps
 1. Confirm real TMDB searches work on the live lab page; then decide the movie card and review design.
 2. Invite the family to the survey; read their answers in the Supabase dashboard.
