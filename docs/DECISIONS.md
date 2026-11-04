@@ -49,7 +49,7 @@
 
 ## DEC-007: Members table and linked Plex accounts
 - **Date:** 2026-11-04
-- **Status:** proposed (migration written, not applied; owner to approve)
+- **Status:** accepted. Migration applied 2026-11-04 with the owner's approval. Checked in the database: a new login gets a member row (trigger); an admin sees everyone and can link and rename; a member sees only their own row and no Plex links and cannot change anything; a stranger sees nothing; the same member plus the same username twice is refused; the same username on two members is allowed.
 - **Context:** Plex "finished watching" alerts need to know which club member a Plex username belongs to, including alternate accounts such as a spouse's. The website cannot read the login list.
 - **Decision:** `members` (one row per login, filled by a trigger on `auth.users`, backfilled for existing people) and `plex_accounts` (many-to-many: a member can have several Plex usernames, and one shared username, e.g. a couple's account, can be linked to several members; once per member, case-insensitive). An alert for a shared account goes to every member linked to it. Admins manage both from the admin page. A member can read only their own `members` row; `plex_accounts` is admin-only for now.
 - **Alternatives considered:** Putting a Plex username column on the survey row (rejected: only one account per person, and not every member answers the survey); linking by Plex numeric account id (kept for later; the username is what the owner can type today, and the webhook field to match will be confirmed when the webhook is built).

@@ -1,6 +1,6 @@
 # Area: admin (owner-only page)
 
-**Status:** survey results live (migration applied 2026-11-04). Members & Plex section built; needs migration `20261104000100` (DEC-007) applied before it works for real. Plex account linking comes next (see STATE.md).
+**Status:** survey results live (migration applied 2026-11-04). Members & Plex section live (migration `20261104000100` applied 2026-11-04, DEC-007). Plex account linking comes next (see STATE.md).
 
 ## Files
 - `admin.html`, `js/admin.js`, `css/admin.css`: the page (unlisted, noindex, no link from other pages). `admin.html?mock=1` shows it with made-up data (`js/admin-mock.js`).
