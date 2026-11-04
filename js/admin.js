@@ -161,14 +161,15 @@ function membersView(store, data) {
 }
 
 // ---------- Plex activity ----------
-const EVENT_LABEL = { "media.play": "started", "media.scrobble": "finished" };
+// Plex also reports stops, but we only keep "started playing" and "finished" (watched past about 90%).
+const EVENT_LABEL = { "media.play": "started playing", "media.scrobble": "finished watching" };
 
 function activityView(store, data) {
   const box = h("div", {}, h("p", { className: "muted", textContent: "Loading…" }));
   store.loadEvents().then((events) => {
     const rows = activityRows(events, memberRows(data.members, data.survey, data.plex));
     box.replaceChildren(
-      h("p", { className: "hint", textContent: "The last 30 movies started or finished on your Plex server, as reported by the Plex webhook. “Not linked” means no member has that Plex name linked yet." }),
+      h("p", { className: "hint", textContent: "The last 30 times a movie was started or finished on your Plex server. A “started playing” row stays as it is even if the movie is stopped later; “finished watching” appears once about 90% has been watched. “Not linked” means no member has that Plex name linked yet." }),
       ...(rows.length ? rows.map((e) => card(
         h("p", { className: "q-title", textContent: e.media_title ?? "(unknown movie)" }),
         h("p", { className: "q-meta", textContent: `${EVENT_LABEL[e.event] ?? e.event} · ${new Date(e.received_at).toLocaleString()}` }),
