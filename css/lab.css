@@ -3,7 +3,6 @@ input[type=search] { width: 100%; background: #08101e; color: var(--text); borde
 input[type=search]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 a { color: var(--accent); }
 h3 { font: 600 1.05rem/1.3 Georgia, "Times New Roman", serif; letter-spacing: .02em; margin: 20px 0 8px; }
-button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); box-shadow: none; text-transform: none; letter-spacing: 0; font-weight: 500; padding: 8px 14px; margin-bottom: 14px; }
 
 /* search results */
 .results { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; }

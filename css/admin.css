@@ -13,3 +13,12 @@
 .quote { margin: 6px 0; padding-left: 10px; border-left: 2px solid var(--line); }
 .person dt { margin-top: 10px; color: var(--muted); font-size: .85rem; }
 .person dd { margin: 2px 0 0; }
+
+/* members & Plex */
+.member-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.member-head .q-title { margin: 0; }
+button.small { padding: 4px 10px; font-size: .8rem; margin: 0; }
+.plex-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; border-top: 1px solid var(--line); padding: 8px 0; }
+.plex-add { display: grid; gap: 8px; margin-top: 10px; }
+@media (min-width: 600px) { .plex-add { grid-template-columns: 1fr 1.4fr auto; } }
+.plex-add input { margin: 0; }

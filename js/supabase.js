@@ -102,7 +102,8 @@ export function callTmdb(session, params) {
   return authed(session, `/functions/v1/tmdb?${new URLSearchParams(params)}`);
 }
 
-// Read rows as the signed-in person; row-level security decides what comes back.
-export function restGet(session, path) {
-  return authed(session, `/rest/v1/${path}`);
+// Read or change rows as the signed-in person; row-level security decides what is allowed.
+// opts: { method, body, headers }. Returns { data, session }.
+export function rest(session, path, opts) {
+  return authed(session, `/rest/v1/${path}`, opts);
 }
