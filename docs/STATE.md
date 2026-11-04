@@ -37,5 +37,5 @@
 - Plex availability of Best Picture nominees: decide before the picking feature.
 
 ## Deferred housekeeping
-- Add the survey tests to CI (CI change).
+- (done in PR "chore: run the tests in CI") tests now run in CI.
 - Dashboard + PWA + points game: add to ROADMAP when ready to plan.
