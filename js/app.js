@@ -2,17 +2,13 @@
 // textContent / DOM nodes (never innerHTML) so typed answers can't inject markup.
 import { INTRO, CLOSING, QUESTIONS } from "./questions.js";
 import { normalizeAnswers, currentAnswers, toggleChoice, setOther, validate, cleanAnswers } from "./logic.js";
+import { h } from "./dom.js";
 import * as api from "./supabase.js";
 
 const app = document.getElementById("app");
 const signoutBtn = document.getElementById("signout");
 let session = null;
 
-function h(tag, props = {}, ...kids) {
-  const el = Object.assign(document.createElement(tag), props);
-  for (const k of kids.flat()) if (k != null) el.append(k);
-  return el;
-}
 function show(...nodes) { app.replaceChildren(...nodes); window.scrollTo(0, 0); }
 
 signoutBtn.onclick = () => { api.signOut(); session = null; showLogin(); };

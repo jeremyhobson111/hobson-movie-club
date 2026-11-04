@@ -96,3 +96,8 @@ export async function saveMyResponse(session, displayName, answers) {
   });
   return s;
 }
+
+// Movie lookups go through our TMDB function so the TMDB key never reaches the browser.
+export function callTmdb(session, params) {
+  return authed(session, `/functions/v1/tmdb?${new URLSearchParams(params)}`);
+}
