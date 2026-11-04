@@ -4,7 +4,7 @@ import { h } from "./dom.js";
 import * as api from "./supabase.js";
 import { QUESTIONS } from "./questions.js";
 import { liveRows, summarize, describe } from "./results.js";
-import { cleanPlexName, memberRows, activityRows, plexErrorMessage } from "./members.js";
+import { cleanPlexName, cleanPlexId, memberRows, activityRows, plexErrorMessage } from "./members.js";
 import { MOCK_ROWS, MOCK_MEMBERS, MOCK_PLEX, MOCK_EVENTS } from "./admin-mock.js";
 
 const app = document.getElementById("app");
@@ -32,8 +32,9 @@ function realStore(session) {
       return { members, plex, survey };
     },
     loadEvents: () => call("plex_events?select=id,received_at,event,plex_account_id,plex_account_title,media_title,tmdb_id&order=received_at.desc&limit=30"),
-    async addPlex(member_id, plex_name, label) {
-      const rows = await call("plex_accounts", { method: "POST", headers: { Prefer: "return=representation" }, body: { member_id, plex_name, label } });
+    // fields: { plex_name, plex_user_id (or null), label (or null) }
+    async addPlex(member_id, fields) {
+      const rows = await call("plex_accounts", { method: "POST", headers: { Prefer: "return=representation" }, body: { member_id, ...fields } });
       return rows[0];
     },
     removePlex: (id) => call(`plex_accounts?id=eq.${id}`, { method: "DELETE" }),
@@ -48,9 +49,11 @@ function mockStore() {
   return {
     load: async () => ({ members: structuredClone(db.members), plex: structuredClone(db.plex), survey: db.survey }),
     loadEvents: async () => structuredClone(db.events),
-    async addPlex(member_id, plex_name, label) {
-      if (db.plex.some((p) => p.member_id === member_id && p.plex_name.toLowerCase() === plex_name.toLowerCase())) throw Object.assign(new Error("duplicate"), { status: 409 });
-      const row = { id: nextId++, member_id, plex_name, label };
+    async addPlex(member_id, fields) {
+      // Same rules as the database: once per member by name, and once per member by id.
+      const clash = (p) => p.member_id === member_id && (p.plex_name.toLowerCase() === fields.plex_name.toLowerCase() || (fields.plex_user_id != null && p.plex_user_id === fields.plex_user_id));
+      if (db.plex.some(clash)) throw Object.assign(new Error("duplicate"), { status: 409 });
+      const row = { id: nextId++, member_id, ...fields };
       db.plex.push(row);
       return { ...row };
     },
@@ -119,19 +122,25 @@ function memberCard(row, store, data, redraw) {
     rm.onclick = () => run(async () => { await store.removePlex(p.id); data.plex = data.plex.filter((x) => x.id !== p.id); });
     return h("div", { className: "plex-row" }, h("span", {},
       h("strong", { textContent: p.plex_name }),
+      // When the name was left blank it is already "Plex ID <n>", so don't repeat the id.
+      p.plex_user_id != null && p.plex_name !== `Plex ID ${p.plex_user_id}` ? h("span", { className: "muted", textContent: ` · ID ${p.plex_user_id}` }) : null,
       p.label ? h("span", { className: "muted", textContent: ` · ${p.label}` }) : null,
       p.sharedWith.length ? h("span", { className: "shared", textContent: ` · shared with ${p.sharedWith.join(", ")}` }) : null), rm);
   });
 
+  const idInput = h("input", { type: "text", inputMode: "numeric", placeholder: "Plex ID, e.g. 21722565", maxLength: 12, ariaLabel: "Plex ID" });
   const user = h("input", { type: "text", placeholder: "Plex username or display name", maxLength: 100, ariaLabel: "Plex username or display name" });
   const label = h("input", { type: "text", placeholder: "Note, e.g. spouse's account (optional)", maxLength: 60, ariaLabel: "Note" });
   const add = h("button", { type: "submit", textContent: "Link account" });
-  const form = h("form", { className: "plex-add" }, user, label, add);
+  const form = h("form", { className: "plex-add" }, idInput, user, label, add);
   form.onsubmit = (e) => {
     e.preventDefault();
-    const name = cleanPlexName(user.value);
-    if (!name) { msg.textContent = "Enter a Plex username or display name."; return; }
-    run(() => store.addPlex(row.member.user_id, name, label.value.trim() || null).then((r) => data.plex.push(r)));
+    const id = cleanPlexId(idInput.value);
+    if (Number.isNaN(id)) { msg.textContent = "The Plex ID must be a whole number (digits only)."; return; }
+    // With an ID the name is just a label, so a blank name is fine; without one the name is how alerts are matched.
+    const name = cleanPlexName(user.value) ?? (id != null ? `Plex ID ${id}` : null);
+    if (!name) { msg.textContent = "Enter a Plex ID, or a Plex username or display name."; return; }
+    run(() => store.addPlex(row.member.user_id, { plex_name: name, plex_user_id: id, label: label.value.trim() || null }).then((r) => data.plex.push(r)));
   };
 
   const rename = h("button", { type: "button", className: "ghost small", textContent: "Rename" });
@@ -153,7 +162,7 @@ function membersView(store, data) {
   const redraw = () => {
     const rows = memberRows(data.members, data.survey, data.plex);
     box.replaceChildren(
-      h("p", { className: "hint", textContent: `${rows.length} ${rows.length === 1 ? "member" : "members"}. Link every Plex account a member watches on, using its username, or the display name for managed users. Two people who share one account each get it linked, and a finished movie there alerts both. Matching ignores upper/lower case.` }),
+      h("p", { className: "hint", textContent: `${rows.length} ${rows.length === 1 ? "member" : "members"}. Link every Plex account a member watches on. Best is the Plex ID (the number shown on the Plex activity tab); without one, alerts are matched by the Plex name, ignoring upper/lower case. Two people who share one account each get it linked, and a finished movie there alerts both.` }),
       ...rows.map((r) => memberCard(r, store, data, redraw)));
   };
   redraw();
@@ -169,7 +178,7 @@ function activityView(store, data) {
   store.loadEvents().then((events) => {
     const rows = activityRows(events, memberRows(data.members, data.survey, data.plex));
     box.replaceChildren(
-      h("p", { className: "hint", textContent: "The last 30 times a movie was started or finished on your Plex server. A “started playing” row stays as it is even if the movie is stopped later; “finished watching” appears once about 90% has been watched. “Not linked” means no member has that Plex name linked yet." }),
+      h("p", { className: "hint", textContent: "The last 30 times a movie was started or finished on your Plex server. A “started playing” row stays as it is even if the movie is stopped later; “finished watching” appears once about 90% has been watched. “Not linked” means no member has that Plex ID or name linked yet: copy the Plex ID into that member's card under Members & Plex." }),
       ...(rows.length ? rows.map((e) => card(
         h("p", { className: "q-title", textContent: e.media_title ?? "(unknown movie)" }),
         h("p", { className: "q-meta", textContent: `${EVENT_LABEL[e.event] ?? e.event} · ${new Date(e.received_at).toLocaleString()}` }),

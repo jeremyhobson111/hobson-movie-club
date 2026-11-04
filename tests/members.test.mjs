@@ -2,7 +2,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { SURVEY_VERSION } from "../js/logic.js";
-import { cleanPlexName, memberLabel, memberRows, activityRows, plexErrorMessage } from "../js/members.js";
+import { cleanPlexName, cleanPlexId, memberLabel, memberRows, activityRows, plexErrorMessage } from "../js/members.js";
+
+test("cleanPlexId: blank means no id, whole numbers are kept, anything else is NaN", () => {
+  assert.equal(cleanPlexId(""), null);
+  assert.equal(cleanPlexId("   "), null);
+  assert.equal(cleanPlexId(undefined), null);
+  assert.equal(cleanPlexId(" 21722565 "), 21722565);
+  for (const bad of ["abc", "12.5", "-4", "0", "1e6", "1234567890123", "21 722"]) assert.ok(Number.isNaN(cleanPlexId(bad)), bad);
+});
 
 test("cleanPlexName trims, drops a leading @, keeps display names with spaces, and rejects empty or huge input", () => {
   assert.equal(cleanPlexName("  @SamWatches "), "SamWatches");
@@ -77,7 +85,50 @@ test("activityRows shows which members an event belongs to, ignoring case; unlin
   assert.deepEqual(activityRows(events, rows).map((e) => e.members), [["Alex", "Chris"], ["Chris"], [], []]);
 });
 
+test("links with a Plex id match events by id only, even if the display name changed or repeats", () => {
+  const members = [
+    { user_id: "a", display_name: "Alex", email: "" },
+    { user_id: "j", display_name: "Jacob's parent", email: "" },
+    { user_id: "z", display_name: "Zed", email: "" },
+  ];
+  const plex = [
+    { id: 1, member_id: "j", plex_name: "Jacob", plex_user_id: 21722565 },
+    { id: 2, member_id: "a", plex_name: "jacob" }, // name only: matches by name
+    { id: 3, member_id: "z", plex_name: "Jacob", plex_user_id: 999 }, // same name, different account
+  ];
+  const rows = memberRows(members, [], plex);
+  const events = [
+    { id: 1, plex_account_id: 21722565, plex_account_title: "Jacob" },
+    { id: 2, plex_account_id: 21722565, plex_account_title: "Renamed Jacob" }, // renamed in Plex
+    { id: 3, plex_account_id: 999, plex_account_title: "Jacob" },
+    { id: 4, plex_account_id: 55, plex_account_title: "Jacob" }, // another Jacob nobody linked by id
+  ];
+  assert.deepEqual(activityRows(events, rows).map((e) => e.members), [
+    ["Alex", "Jacob's parent"], // by id, plus the name-only link
+    ["Jacob's parent"], // the id still matches after a rename; the name-only link no longer does
+    ["Alex", "Zed"],
+    ["Alex"], // only the name-only link matches
+  ]);
+});
+
+test("sharing is detected by id when both links have one, else by name", () => {
+  const members = [
+    { user_id: "a", display_name: "A", email: "" },
+    { user_id: "b", display_name: "B", email: "" },
+    { user_id: "c", display_name: "C", email: "" },
+  ];
+  const plex = [
+    { id: 1, member_id: "a", plex_name: "Family", plex_user_id: 10 },
+    { id: 2, member_id: "b", plex_name: "family acct", plex_user_id: 10 }, // same id, different spelling
+    { id: 3, member_id: "c", plex_name: "Family", plex_user_id: 11 }, // same name, different account
+  ];
+  const [a, b, c] = memberRows(members, [], plex);
+  assert.deepEqual(a.plex[0].sharedWith, ["B"]);
+  assert.deepEqual(b.plex[0].sharedWith, ["A"]);
+  assert.deepEqual(c.plex[0].sharedWith, []);
+});
+
 test("plexErrorMessage explains a duplicate in plain words", () => {
-  assert.match(plexErrorMessage({ status: 409 }), /already has that Plex name/);
+  assert.match(plexErrorMessage({ status: 409 }), /already has that Plex account linked/);
   assert.match(plexErrorMessage({ status: 500, message: "boom" }), /boom/);
 });
