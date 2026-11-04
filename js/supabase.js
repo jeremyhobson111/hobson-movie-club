@@ -101,3 +101,8 @@ export async function saveMyResponse(session, displayName, answers) {
 export function callTmdb(session, params) {
   return authed(session, `/functions/v1/tmdb?${new URLSearchParams(params)}`);
 }
+
+// Read rows as the signed-in person; row-level security decides what comes back.
+export function restGet(session, path) {
+  return authed(session, `/rest/v1/${path}`);
+}
