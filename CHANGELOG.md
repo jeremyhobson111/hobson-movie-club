@@ -18,5 +18,6 @@ All notable changes. Format based on Keep a Changelog; versions follow semver.
 - Daily keep-alive job so the Supabase free plan does not pause the project.
 - Admin page (admin.html, owner only): survey results by question and by person. Needs the admin database change applied (DEC-006).
 - Admin "Members & Plex" section: link Plex usernames (several per member) to members; rename members.
+- Plex alerts phase 1 (not live until deployed): webhook receiver that logs movies started/finished, and a "Plex activity" admin tab. Plex links now use the Plex name, so managed users work.
 - Survey replaced with the shorter v2 (13 questions about the old club, a points game and a phone app).
 - Site now publishes to GitHub Pages on every merge to `main` (DEC-003).
