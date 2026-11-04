@@ -16,7 +16,7 @@ Family members only (small group, not public). Each person logs in with email so
 ## Commands
 - Install: none (no dependencies yet)
 - Run locally: `python -m http.server 8000` from the repo root, then open http://localhost:8000
-- Test: `node --test tests/logic.test.mjs` (survey rules; not yet in CI, needs approval)
+- Test: `node --test tests/*.test.mjs`, plus `node --experimental-strip-types --no-warnings tests/plex-webhook.check.mjs` and `.../tests/send-push.check.mjs` (Node 22). All three run in CI.
 - Lint/format: none yet
 - Build: none (static files)
 
