@@ -4,8 +4,12 @@
    if we want a special font later, ship the font file in the repo instead. */
 :root { --bg: #060b14; --card: #0d1626; --text: #eaf0ff; --muted: #7f8bab; --accent: #f0b13f; --accent2: #d99a2b; --line: #1d2a44; --err: #ff7a7a; }
 * { box-sizing: border-box; }
+/* The color must be on html, not just body: on phones the visible area grows when the address bar hides,
+   and anything not covered by html shows the default white. The glow is on body and fades to transparent. */
+html { background-color: var(--bg); color-scheme: dark; }
 body { margin: 0; color: var(--text); font: 17px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: radial-gradient(ellipse at top, #0f1c36 0%, var(--bg) 55%) fixed; min-height: 100vh; }
+  background: radial-gradient(ellipse at top, #0f1c36 0%, transparent 55%) no-repeat;
+  min-height: 100vh; min-height: 100dvh; }
 header { max-width: 720px; margin: 0 auto; padding: 16px 16px 8px; text-align: right; }
 h1 { margin: 0; }
 h1 img { display: block; width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line); }
