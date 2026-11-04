@@ -68,5 +68,7 @@ Deno.serve(async (req) => {
     body: JSON.stringify(row),
   });
   // A non-200 makes Plex retry, which is what we want if the database hiccuped.
+  // Say why in the function logs (the database's error text only: no key, no payload).
+  if (!res.ok) console.log(JSON.stringify({ stored: false, status: res.status, error: (await res.text()).slice(0, 300) }));
   return new Response(res.ok ? "ok" : "database error", { status: res.ok ? 200 : 500 });
 });
