@@ -4,12 +4,15 @@ import { INTRO, CLOSING, QUESTIONS } from "./questions.js";
 import { normalizeAnswers, currentAnswers, toggleChoice, setOther, validate, cleanAnswers } from "./logic.js";
 import { h } from "./dom.js";
 import * as api from "./supabase.js";
+import { registerServiceWorker } from "./push.js";
+import { notificationsCard } from "./notifications.js";
 
 const app = document.getElementById("app");
 const signoutBtn = document.getElementById("signout");
 let session = null;
 
-function show(...nodes) { app.replaceChildren(...nodes); window.scrollTo(0, 0); }
+// replaceChildren would turn a null into the text "null", so drop empty slots first.
+function show(...nodes) { app.replaceChildren(...nodes.filter(Boolean)); window.scrollTo(0, 0); }
 
 signoutBtn.onclick = () => { api.signOut(); session = null; showLogin(); };
 
@@ -134,7 +137,7 @@ async function showSurvey() {
       save.disabled = false; save.textContent = "Try again";
     }
   };
-  show(h("h2", { textContent: "Hobson Movie Club survey" }), form);
+  show(h("h2", { textContent: "Hobson Movie Club survey" }), await notificationsCard(), form);
 }
 
 function showThanks() {
@@ -144,6 +147,7 @@ function showThanks() {
 }
 
 // ---------- start ----------
+registerServiceWorker();
 (async () => {
   try {
     session = (await api.sessionFromLink()) ?? api.loadSession();

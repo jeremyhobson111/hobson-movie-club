@@ -5,7 +5,7 @@
 ## Files
 - `supabase/functions/tmdb/index.ts`: the Edge Function (search + movie details). Secret `TMDB_READ_TOKEN`. See DEC-004.
 - `lab.html`, `js/lab.js`, `css/lab.css`: search, movie card, review section. `js/lab-mock.js` + `lab.html?mock=1` shows it with sample data and no login or key.
-- `js/supabase.js` `callTmdb`: calls the function as the signed-in person. `js/dom.js`: shared element builder.
+- `js/supabase.js` `callFunction`: calls one of our Supabase functions (TMDB, test notifications) as the signed-in person. `js/dom.js`: shared element builder.
 
 ## Notes
 - Reviews on the lab page are stored only in the browser (localStorage key `hmc-lab-reviews`); the "everyone's reviews" list is made-up sample data to preview the weekly reveal. A real design needs a `reviews` table (RLS, one row per person per movie, star rating 1-5 + text); that is a remote migration, so ask first.

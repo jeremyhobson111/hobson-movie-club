@@ -5,7 +5,8 @@ import * as api from "./supabase.js";
 import { QUESTIONS } from "./questions.js";
 import { liveRows, summarize, describe } from "./results.js";
 import { cleanPlexName, cleanPlexId, memberRows, activityRows, plexErrorMessage } from "./members.js";
-import { MOCK_ROWS, MOCK_MEMBERS, MOCK_PLEX, MOCK_EVENTS } from "./admin-mock.js";
+import { notificationsView } from "./admin-notify.js";
+import { MOCK_ROWS, MOCK_MEMBERS, MOCK_PLEX, MOCK_EVENTS, MOCK_SUBS } from "./admin-mock.js";
 
 const app = document.getElementById("app");
 const mock = new URLSearchParams(location.search).has("mock");
@@ -37,6 +38,19 @@ function realStore(session) {
       const rows = await call("plex_accounts", { method: "POST", headers: { Prefer: "return=representation" }, body: { member_id, ...fields } });
       return rows[0];
     },
+    // Notifications: which devices have them on, what was sent, and sending a test (the function checks we are an admin).
+    async loadPush() {
+      const [subs, log] = await Promise.all([
+        call("push_subscriptions?select=user_id,user_agent,created_at&order=created_at"),
+        call("notification_log?select=id,user_id,kind,title,devices_sent,devices_failed,is_test,sent_at&order=sent_at.desc&limit=20"),
+      ]);
+      return { subs, log };
+    },
+    async sendPush(payload) {
+      const r = await api.callFunction(session, "send-push", { method: "POST", body: payload });
+      session = r.session;
+      return r.data;
+    },
     removePlex: (id) => call(`plex_accounts?id=eq.${id}`, { method: "DELETE" }),
     renameMember: (user_id, display_name) => call(`members?user_id=eq.${user_id}`, { method: "PATCH", body: { display_name } }),
   };
@@ -44,11 +58,25 @@ function realStore(session) {
 
 // Behaves like the real database: the page gets its own copy of the data and updates it itself.
 function mockStore() {
-  const db = { members: structuredClone(MOCK_MEMBERS), plex: structuredClone(MOCK_PLEX), survey: MOCK_ROWS, events: MOCK_EVENTS };
+  const db = { members: structuredClone(MOCK_MEMBERS), plex: structuredClone(MOCK_PLEX), survey: MOCK_ROWS, events: MOCK_EVENTS, subs: structuredClone(MOCK_SUBS), log: [] };
   let nextId = 100;
   return {
     load: async () => ({ members: structuredClone(db.members), plex: structuredClone(db.plex), survey: db.survey }),
     loadEvents: async () => structuredClone(db.events),
+    loadPush: async () => ({ subs: structuredClone(db.subs), log: structuredClone(db.log) }),
+    // Pretends to be the send-push function: one result per person with devices, the rest skipped.
+    async sendPush({ user_ids, everyone, kind, title, body }) {
+      if (!title || !body) throw new Error("The title must be 1 to 80 characters.");
+      const targets = everyone ? [...new Set(db.subs.map((s) => s.user_id))] : user_ids;
+      const results = [], skipped = [];
+      for (const id of targets) {
+        const n = db.subs.filter((s) => s.user_id === id).length;
+        if (!n) { skipped.push(id); continue; }
+        results.push({ user_id: id, sent: n, failed: 0, removed: 0 });
+        db.log.unshift({ id: db.log.length + 1, user_id: id, kind, title: `Test: ${title}`, devices_sent: n, devices_failed: 0, is_test: true, sent_at: new Date().toISOString() });
+      }
+      return { results, skipped };
+    },
     async addPlex(member_id, fields) {
       // Same rules as the database: once per member by name, and once per member by id.
       const clash = (p) => p.member_id === member_id && (p.plex_name.toLowerCase() === fields.plex_name.toLowerCase() || (fields.plex_user_id != null && p.plex_user_id === fields.plex_user_id));
@@ -195,9 +223,14 @@ function showAdmin(store, data) {
   let section = "results";
   const tabs = h("div");
   const body = h("div");
-  const views = { results: () => resultsView(data.survey), members: () => membersView(store, data), activity: () => activityView(store, data) };
+  const views = {
+    results: () => resultsView(data.survey),
+    members: () => membersView(store, data),
+    activity: () => activityView(store, data),
+    notifications: () => notificationsView(store, data),
+  };
   const draw = () => {
-    tabs.replaceChildren(tabRow([["results", "Survey results"], ["members", "Members & Plex"], ["activity", "Plex activity"]], section, (k) => { section = k; draw(); }));
+    tabs.replaceChildren(tabRow([["results", "Survey results"], ["members", "Members & Plex"], ["activity", "Plex activity"], ["notifications", "Notifications"]], section, (k) => { section = k; draw(); }));
     body.replaceChildren(views[section]());
   };
   draw();

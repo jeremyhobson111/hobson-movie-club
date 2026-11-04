@@ -10,7 +10,7 @@ let session = null;
 
 async function tmdb(params) {
   if (mock) return mockCall(params);
-  const r = await api.callTmdb(session, params);
+  const r = await api.callFunction(session, "tmdb", { params });
   session = r.session;
   return r.data;
 }

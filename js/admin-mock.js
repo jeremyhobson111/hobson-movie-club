@@ -40,3 +40,10 @@ export const MOCK_EVENTS = [
   { id: 2, received_at: "2026-11-03T21:15:00Z", event: "media.scrobble", plex_account_id: 21722565, plex_account_title: "Jacob", plex_account_thumb: null, media_title: "Up", tmdb_id: 14160 },
   { id: 1, received_at: "2026-11-03T19:30:00Z", event: "media.play", plex_account_id: 21722565, plex_account_title: "Jacob", plex_account_thumb: null, media_title: "Up", tmdb_id: 14160 },
 ];
+
+// Devices that turned notifications on (Sam has a phone and a laptop; Alex one phone; Dana and Pat none).
+export const MOCK_SUBS = [
+  { user_id: "u-sam", user_agent: "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36", created_at: "2026-11-04T09:00:00Z" },
+  { user_id: "u-sam", user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130.0 Safari/537.36", created_at: "2026-11-04T09:10:00Z" },
+  { user_id: "u-alex", user_agent: "Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 Chrome/129.0 Mobile Safari/537.36", created_at: "2026-11-04T09:20:00Z" },
+];
