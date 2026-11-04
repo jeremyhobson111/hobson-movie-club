@@ -1,6 +1,6 @@
 # Area: notifications (push to phones and computers)
 
-**Status:** test setup live (DEC-010); real-device delivery still to be confirmed by the owner. Members can turn notifications on; the owner can send marked-as-test messages from the admin page. The automatic ones (finished watching, reminders, picks) are not built yet: they need the club's round/pick structure.
+**Status:** test setup live and verified on a real Chrome device (DEC-010). Members can turn notifications on; the owner can send marked-as-test messages from the admin page. The automatic ones (finished watching, reminders, picks) are not built yet: they need the club's round/pick structure.
 
 ## Files
 - `manifest.webmanifest`, `sw.js`: make the site an installable app and show push messages. `sw.js` caches nothing on purpose.
