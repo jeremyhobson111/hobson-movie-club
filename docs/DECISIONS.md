@@ -25,7 +25,7 @@
 
 ## DEC-004: TMDB lookups go through a Supabase Edge Function
 - **Date:** 2026-11-04
-- **Status:** proposed (function written, not yet deployed; owner to approve and set the secret)
+- **Status:** accepted. Deployed 2026-11-04 (function `tmdb`, version 1, verify_jwt on) with the owner's approval. Redeploy after any change to supabase/functions/tmdb/index.ts (ask first).
 - **Context:** Movie search, posters and details come from TMDB. Its token must not be in browser code on a public site.
 - **Decision:** One Edge Function, `supabase/functions/tmdb`, holds the token as the Supabase secret `TMDB_READ_TOKEN`. The browser calls it with the person's login token; it only serves signed-in users, only allows our site origins, and returns a trimmed result (search list, or one movie with cast, trailer, US streaming, rating). The site shows the TMDB attribution notice.
 - **Alternatives considered:** Token in the browser (rejected: public); a separate server (rejected: a third service).
