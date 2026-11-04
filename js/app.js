@@ -23,7 +23,7 @@ function showLogin(note = "") {
   const email = h("input", { type: "email", required: true, placeholder: "you@example.com", autocomplete: "email" });
   const msg = h("p", { className: "muted", textContent: note });
   const form = h("form", { className: "card" },
-    h("p", { textContent: "Enter the email address you were invited with. We'll email you a sign-in link and a 6-digit code." }),
+    h("p", { textContent: "Enter the email address you were invited with. We'll email you a sign-in link and a code." }),
     email, h("button", { type: "submit", textContent: "Email me a sign-in link" }), msg);
   form.onsubmit = async (e) => {
     e.preventDefault();
@@ -40,7 +40,7 @@ function showLogin(note = "") {
 }
 
 function showCodeEntry(email) {
-  const code = h("input", { type: "text", inputMode: "numeric", autocomplete: "one-time-code", placeholder: "6-digit code", maxLength: 8 });
+  const code = h("input", { type: "text", inputMode: "numeric", autocomplete: "one-time-code", placeholder: "Code from the email", maxLength: 8 });
   const msg = h("p", { className: "error" });
   const form = h("form", { className: "card" },
     h("p", { textContent: `Check ${email}. Click the link in the email, or type the code here.` }),

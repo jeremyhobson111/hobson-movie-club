@@ -10,5 +10,6 @@ All notable changes. Format based on Keep a Changelog; versions follow semver.
 - Branded login and invite email templates saved in supabase/email-templates/.
 - Fixed survey question titles sitting half outside their cards.
 - Survey question 7: removed the "Couldn't easily find or watch it" option.
+- Login page no longer says the code is 6 digits (Supabase sends 8).
 - Survey replaced with the shorter v2 (13 questions about the old club, a points game and a phone app).
 - Site now publishes to GitHub Pages on every merge to `main` (DEC-003).
