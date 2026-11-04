@@ -17,8 +17,8 @@
 ## Admin page
 - `admin.html` is live once merged: survey results by question and by person. Migration applied, owner is the first admin (DEC-006).
 
-## Plex alerts (phase 1, in review)
-- Branch `feat/plex-webhook-log`: webhook receiver + `plex_events` log + admin "Plex activity" tab; Plex linking now by name (works for managed users). Needs owner OK to apply migration `20261104000200`, deploy `plex-webhook`, set `PLEX_WEBHOOK_SECRET`, add the webhook in Plex (see docs/areas/plex.md).
+## Plex alerts (phase 1, deployed, waiting on the owner)
+- Live: migration `20261104000200`, function `plex-webhook`, admin "Plex activity" tab, Plex linking by name (works for managed users). Owner to do: set secret `PLEX_WEBHOOK_SECRET`, add the webhook in Plex (steps in docs/areas/plex.md), watch a few seconds of a movie on a normal and a managed account, and check the Plex activity tab.
 
 ## Members & Plex (done)
 - Admin "Members & Plex" section: link Plex usernames to members (several per member; one shared account can go to several members, e.g. a couple). Migration applied (DEC-007). Next: Plex webhook receiver that alerts every member linked to the account.
