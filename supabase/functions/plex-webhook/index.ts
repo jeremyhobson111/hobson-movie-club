@@ -42,7 +42,19 @@ Deno.serve(async (req) => {
   }
 
   // Ignore everything except movie plays/finishes: acknowledge so Plex doesn't retry.
-  if (!p || !LOGGED_EVENTS.has(p.event) || p.Metadata?.type !== "movie") return new Response("ignored");
+  if (!p || !LOGGED_EVENTS.has(p.event) || p.Metadata?.type !== "movie") {
+    // TEMPORARY (debugging): record what was ignored, without the key, addresses or the full body.
+    console.log(JSON.stringify({
+      ignored: true,
+      event: p?.event ?? null,
+      type: p?.Metadata?.type ?? null,
+      account: p?.Account?.title ?? null,
+      media: p?.Metadata?.title ?? null,
+      topKeys: p ? Object.keys(p) : null,
+      metadataKeys: Object.keys(p?.Metadata ?? {}),
+    }));
+    return new Response("ignored");
+  }
 
   const guids: string[] = Array.isArray(p.Metadata?.Guid) ? p.Metadata.Guid.map((g: any) => String(g?.id ?? "")) : [];
   const tmdb = guids.find((g) => g.startsWith("tmdb://"))?.slice(7);
