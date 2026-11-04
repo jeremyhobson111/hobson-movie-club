@@ -30,3 +30,11 @@
 - **Decision:** One Edge Function, `supabase/functions/tmdb`, holds the token as the Supabase secret `TMDB_READ_TOKEN`. The browser calls it with the person's login token; it only serves signed-in users, only allows our site origins, and returns a trimmed result (search list, or one movie with cast, trailer, US streaming, rating). The site shows the TMDB attribution notice.
 - **Alternatives considered:** Token in the browser (rejected: public); a separate server (rejected: a third service).
 - **Consequences:** Needs a deploy of the function and the secret. Free tier limits apply. Non-commercial use only under TMDB terms (fine for a family club; revisit if it is ever sold). TMDB does not know about Plex, so "available on Plex" is a separate question.
+
+## DEC-005: Daily keep-alive so Supabase does not pause
+- **Date:** 2026-11-04
+- **Status:** accepted (owner approved)
+- **Context:** The Supabase free plan pauses a project after about a week with no activity. A biweekly club could go quiet that long.
+- **Decision:** `.github/workflows/keep-supabase-awake.yml` runs daily and makes one REST request with the public key. A 401 "permission denied" from Postgres (or a 200) counts as healthy; anything else fails the job, so GitHub emails the owner. Chosen over relying on the future reminder job, since this is simple and checkable.
+- **Alternatives considered:** Supabase Pro plan (paid, no pausing); a pg_cron job (unclear whether internal calls count as activity).
+- **Consequences:** GitHub disables scheduled workflows after 60 days with no repo activity (it emails a warning first); any merge re-arms it. If the project is ever paused anyway, restore it from the Supabase dashboard.

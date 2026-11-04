@@ -9,6 +9,11 @@
 ## In progress
 - Branch: `main`. Owner to sign in on hobsonmovieclub.com, open /lab.html and try a real search (needs secret `TMDB_READ_TOKEN` set in Supabase).
 
+## Decided (ideas, nothing built yet)
+- Admin dashboard (owner only, enforced in the database, not just hidden): survey results, then link Plex usernames (several per member, e.g. a spouse) to members.
+- Plex "finished watching" alert via Plex webhook (owner has Plex Pass), once per person per movie; push notifications only (no email besides login/invites) plus an in-app inbox. Watching on Plex is never required to rate/review; add an "I watched it" button.
+- On pick: check Overseerr (reachable from the internet) for the movie, store its Plex link and status in the database, optionally request it if missing.
+
 ## Next steps
 1. Confirm real TMDB searches work on the live lab page; then decide the movie card and review design.
 2. Invite the family to the survey; read their answers in the Supabase dashboard.
