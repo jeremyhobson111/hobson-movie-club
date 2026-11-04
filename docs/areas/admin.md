@@ -1,6 +1,6 @@
 # Area: admin (owner-only page)
 
-**Status:** v1 = survey results. Plex account linking comes next (see STATE.md).
+**Status:** v1 = survey results, live (migration applied 2026-11-04). Plex account linking comes next (see STATE.md).
 
 ## Files
 - `admin.html`, `js/admin.js`, `css/admin.css`: the page (unlisted, noindex, no link from other pages). `admin.html?mock=1` shows it with made-up data (`js/admin-mock.js`).

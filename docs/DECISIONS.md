@@ -41,7 +41,7 @@
 
 ## DEC-006: Admin access via an `admins` table
 - **Date:** 2026-11-04
-- **Status:** proposed (migration written, not applied; owner to approve)
+- **Status:** accepted. Migration applied 2026-11-04 with the owner's approval; the owner was added as the first admin. Checked in the database: an admin sees all survey rows, a regular member only their own, a stranger none.
 - **Context:** The owner needs a page that is only theirs: survey results now, Plex account linking next.
 - **Decision:** A table `admins (user_id)` lists admins. Row-level security lets a signed-in person see only their own row there (how the page asks "am I an admin?"), and an extra policy lets admins read all `survey_responses`. No API write access to `admins`: the owner adds themselves once in the Supabase SQL editor. The page `admin.html` only chooses what to show; the database enforces access.
 - **Alternatives considered:** Hiding the page or checking an email in JavaScript (rejected: not real protection); a service-role Edge Function (more moving parts than a policy).
