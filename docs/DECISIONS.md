@@ -65,7 +65,7 @@
 
 ## DEC-009: Link Plex accounts by a typed-in Plex ID; no Plex token stored
 - **Date:** 2026-11-04
-- **Status:** accepted for the code; the small database rules in migration `20261104000400` need the owner's OK to apply
+- **Status:** accepted. Migration `20261104000400` applied 2026-11-04 with the owner's OK; checked in the database: same member + same id refused, id 0 and negative refused, the same id on two members allowed, name-only links still work.
 - **Context:** Real Plex alerts showed `Account.id` is a large plex.tv-style number for both the owner (21693055) and a managed user (21722565), not 1 as Plex's help page says, and `Account.title` is the display name. A user-list picker would need the owner's Plex token as a secret, which works like a password for the whole Plex account. The owner declined that risk and has another way to find Plex ids.
 - **Decision:** No `PLEX_TOKEN`, no user-list picker. The owner types each member's Plex ID (and optionally a name and note) in the admin page. Alerts are matched by ID when the link has one, otherwise by name (case-insensitive). The activity tab shows each event's Plex ID so it can be copied. `plex_name` stays required (a blank name with an ID becomes "Plex ID <n>").
 - **Alternatives considered:** plex.tv user-list picker (rejected: token risk); matching by name only (kept as fallback: names can repeat or change).
