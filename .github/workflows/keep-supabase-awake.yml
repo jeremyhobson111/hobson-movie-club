@@ -1,0 +1,32 @@
+name: Keep Supabase awake
+
+# Supabase's free plan pauses a project after about a week with no activity (DEC-005).
+# This asks the database one harmless question every day so a biweekly club never trips it.
+# If the database does not answer, this job fails and GitHub emails the repo owner.
+on:
+  schedule:
+    - cron: "17 14 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask the database a question
+        env:
+          # Public by design: the same publishable key is in the website's code.
+          SUPABASE_URL: https://bfpjetztwfcwzcjfxakx.supabase.co
+          SUPABASE_KEY: sb_publishable_lT9lYQzNJPuR7tL-LR8Wcg_e_wXNg3O
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 \
+            -H "apikey: $SUPABASE_KEY" \
+            "$SUPABASE_URL/rest/v1/survey_responses?select=user_id&limit=1")
+          echo "Database answered with HTTP $code"
+          # 401 is the expected answer: Postgres itself says the public key may not read this table,
+          # which proves the database is awake without exposing anything. 200 would also be fine.
+          if [ "$code" != "401" ] && [ "$code" != "200" ]; then
+            echo "Unexpected answer: the project may be paused or down."
+            exit 1
+          fi

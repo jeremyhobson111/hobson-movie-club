@@ -25,6 +25,7 @@ Merging a PR to `main` runs `.github/workflows/pages.yml`, which publishes `inde
 
 ## Operations
 Backups, monitoring, known issues, recurring tasks.
+- A daily GitHub job (`keep-supabase-awake.yml`) pings the database so the free-plan project is not paused for inactivity (DEC-005). If it fails, GitHub emails the owner; check the Supabase dashboard.
 
 ## License and ownership
 {{license, third-party licenses to be aware of}}
