@@ -17,6 +17,9 @@
 ## Admin page
 - `admin.html` is live once merged: survey results by question and by person. Migration applied, owner is the first admin (DEC-006).
 
+## Notifications test setup (live; real device test pending)
+- Live: installable-app files, member "Turn on notifications" card, admin Notifications tab, `send-push` function, migration `20261104000500`, VAPID public key in `js/push.js`. Not yet verified on a real device: owner to turn notifications on in Chrome and use Admin > Notifications > Send test. See docs/areas/notifications.md.
+
 ## Plex alerts (phase 1 and ID linking live)
 - Live and tested with real events (owner and a managed user): webhook receiver, `plex_events`, Plex activity tab. Link members by typed Plex ID (DEC-009), name as fallback; migration `20261104000400` applied. Owner to link their own ID (21693055) and managed accounts under Members & Plex. Next: the actual "finished watching" notification (once per person per movie).
 - Owner to do sometime: rotate `PLEX_WEBHOOK_SECRET` (it appears in Supabase logs) and update the webhook address in Plex.

@@ -19,5 +19,6 @@ All notable changes. Format based on Keep a Changelog; versions follow semver.
 - Admin page (admin.html, owner only): survey results by question and by person. Needs the admin database change applied (DEC-006).
 - Admin "Members & Plex" section: link Plex usernames (several per member) to members; rename members.
 - Plex alerts phase 1 is live: webhook receiver that logs movies started/finished, and a "Plex activity" admin tab. Plex links can use a name, or (better) a typed-in Plex ID, so managed users work; no Plex token is stored.
+- Notifications test setup (not live until deployed): installable-app files, a "Turn on notifications" card for members, and an admin Notifications tab for sending marked-as-test messages.
 - Survey replaced with the shorter v2 (13 questions about the old club, a points game and a phone app).
 - Site now publishes to GitHub Pages on every merge to `main` (DEC-003).

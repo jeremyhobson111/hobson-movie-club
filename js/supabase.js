@@ -30,7 +30,7 @@ async function call(path, { method = "GET", body, token, headers = {} } = {}) {
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;
   if (!res.ok) {
-    const err = new Error(data?.msg || data?.message || data?.error_description || `Request failed (${res.status})`);
+    const err = new Error(data?.msg || data?.message || data?.error_description || (typeof data?.error === "string" ? data.error : null) || `Request failed (${res.status})`);
     err.status = res.status;
     throw err;
   }
@@ -97,9 +97,11 @@ export async function saveMyResponse(session, displayName, answers) {
   return s;
 }
 
-// Movie lookups go through our TMDB function so the TMDB key never reaches the browser.
-export function callTmdb(session, params) {
-  return authed(session, `/functions/v1/tmdb?${new URLSearchParams(params)}`);
+// Call one of our Supabase functions as the signed-in person. opts: { params, method, body }.
+// Returns { data, session }. (TMDB lookups and test notifications both go through here.)
+export function callFunction(session, name, { params, method, body } = {}) {
+  const query = params ? `?${new URLSearchParams(params)}` : "";
+  return authed(session, `/functions/v1/${name}${query}`, { method, body });
 }
 
 // Read or change rows as the signed-in person; row-level security decides what is allowed.
