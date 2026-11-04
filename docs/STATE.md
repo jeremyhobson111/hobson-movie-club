@@ -14,6 +14,9 @@
 - Plex "finished watching" alert via Plex webhook (owner has Plex Pass), once per person per movie; push notifications only (no email besides login/invites) plus an in-app inbox. Watching on Plex is never required to rate/review; add an "I watched it" button.
 - On pick: check Overseerr (reachable from the internet) for the movie, store its Plex link and status in the database, optionally request it if missing.
 
+## Admin page
+- `admin.html` is live once merged: survey results by question and by person. Migration applied, owner is the first admin (DEC-006).
+
 ## Next steps
 1. Confirm real TMDB searches work on the live lab page; then decide the movie card and review design.
 2. Invite the family to the survey; read their answers in the Supabase dashboard.

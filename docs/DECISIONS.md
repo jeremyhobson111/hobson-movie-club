@@ -38,3 +38,11 @@
 - **Decision:** `.github/workflows/keep-supabase-awake.yml` runs daily and makes one REST request with the public key. A 401 "permission denied" from Postgres (or a 200) counts as healthy; anything else fails the job, so GitHub emails the owner. Chosen over relying on the future reminder job, since this is simple and checkable.
 - **Alternatives considered:** Supabase Pro plan (paid, no pausing); a pg_cron job (unclear whether internal calls count as activity).
 - **Consequences:** GitHub disables scheduled workflows after 60 days with no repo activity (it emails a warning first); any merge re-arms it. If the project is ever paused anyway, restore it from the Supabase dashboard.
+
+## DEC-006: Admin access via an `admins` table
+- **Date:** 2026-11-04
+- **Status:** accepted. Migration applied 2026-11-04 with the owner's approval; the owner was added as the first admin. Checked in the database: an admin sees all survey rows, a regular member only their own, a stranger none.
+- **Context:** The owner needs a page that is only theirs: survey results now, Plex account linking next.
+- **Decision:** A table `admins (user_id)` lists admins. Row-level security lets a signed-in person see only their own row there (how the page asks "am I an admin?"), and an extra policy lets admins read all `survey_responses`. No API write access to `admins`: the owner adds themselves once in the Supabase SQL editor. The page `admin.html` only chooses what to show; the database enforces access.
+- **Alternatives considered:** Hiding the page or checking an email in JavaScript (rejected: not real protection); a service-role Edge Function (more moving parts than a policy).
+- **Consequences:** Admins can read, not edit, other people's answers. Plex linking will add more admin-only tables the same way.
