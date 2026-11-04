@@ -3,7 +3,7 @@ import * as api from "./supabase.js";
 
 // The PUBLIC half of the push key pair (safe to share, it is not a secret). Make the pair with
 // scripts/make-vapid-keys.mjs. While this is empty, the notifications card stays hidden.
-export const VAPID_PUBLIC_KEY = "";
+export const VAPID_PUBLIC_KEY = "BGZQTq9c_JYAx5oH5FRt5-S2DxCFz3lFYcVFg3x1-MdMjdzrMbsWHAedkhlA1XJAwzxBNE6st5Ogfe-lxXx-mXs";
 
 // The browser wants the key as bytes, not as base64 text.
 export function urlBase64ToUint8Array(b64) {

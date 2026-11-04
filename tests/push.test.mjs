@@ -4,7 +4,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
 import { execFileSync } from "node:child_process";
-import { urlBase64ToUint8Array, pushSupport } from "../js/push.js";
+import { createECDH } from "node:crypto";
+import { urlBase64ToUint8Array, pushSupport, VAPID_PUBLIC_KEY } from "../js/push.js";
 
 test("urlBase64ToUint8Array decodes push keys (with and without padding)", () => {
   const bytes = Buffer.from("hello push key!!", "utf8");
@@ -28,6 +29,14 @@ test("pushSupport: what each kind of device is told", () => {
   // iPhone in a normal Safari tab must be told to install first, even though it lacks push there
   assert.equal(pushSupport({ ...ok, isIOS: true, hasPush: false }), "install-first");
   assert.equal(pushSupport({ ...ok, isIOS: true, isStandalone: true }), "available");
+});
+
+test("the public push key in js/push.js is a valid P-256 public key (catches a typo or a pasted private key)", () => {
+  const bytes = Buffer.from(VAPID_PUBLIC_KEY, "base64url");
+  assert.equal(bytes.length, 65);
+  assert.equal(bytes[0], 4);
+  createECDH("prime256v1").setPrivateKey(Buffer.alloc(32, 1)); // sanity: the curve is available
+  assert.doesNotThrow(() => createECDH("prime256v1").constructor.convertKey(bytes, "prime256v1", undefined, undefined, "uncompressed"));
 });
 
 test("make-vapid-keys prints a valid public/private pair", () => {
