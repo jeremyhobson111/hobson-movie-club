@@ -28,15 +28,15 @@ export const MOCK_MEMBERS = [
 ];
 
 export const MOCK_PLEX = [
-  { id: 1, member_id: "u-alex", plex_name: "alexwatches", label: "Main account" },
-  { id: 2, member_id: "u-alex", plex_name: "alexs_spouse", label: "Spouse's account" },
-  { id: 3, member_id: "u-dana", plex_name: "AlexS_Spouse", label: "Shared with Alex" }, // a couple on one account
+  { id: 1, member_id: "u-alex", plex_name: "alexwatches", plex_user_id: 21693055, label: "Main account" },
+  { id: 2, member_id: "u-alex", plex_name: "alexs_spouse", plex_user_id: 30000001, label: "Spouse's account" },
+  { id: 3, member_id: "u-dana", plex_name: "Spouse account", plex_user_id: 30000001, label: "Shared with Alex" }, // a couple on one account, same ID
 ];
 
-// Plex events as the webhook would log them (newest first). "Kid Account" is not linked to anyone yet.
+// Plex events as the webhook would log them (newest first). "Jacob" (a managed user) is not linked to anyone yet.
 export const MOCK_EVENTS = [
-  { id: 4, received_at: "2026-11-04T20:41:00Z", event: "media.scrobble", plex_account_id: 1, plex_account_title: "alexwatches", plex_account_thumb: null, media_title: "Parasite", tmdb_id: 496243 },
-  { id: 3, received_at: "2026-11-04T18:02:00Z", event: "media.play", plex_account_id: 1, plex_account_title: "alexwatches", plex_account_thumb: null, media_title: "Parasite", tmdb_id: 496243 },
-  { id: 2, received_at: "2026-11-03T21:15:00Z", event: "media.scrobble", plex_account_id: 481516, plex_account_title: "Kid Account", plex_account_thumb: null, media_title: "Up", tmdb_id: 14160 },
-  { id: 1, received_at: "2026-11-03T19:30:00Z", event: "media.play", plex_account_id: 481516, plex_account_title: "Kid Account", plex_account_thumb: null, media_title: "Up", tmdb_id: 14160 },
+  { id: 4, received_at: "2026-11-04T20:41:00Z", event: "media.scrobble", plex_account_id: 21693055, plex_account_title: "alexwatches", plex_account_thumb: null, media_title: "Parasite", tmdb_id: 496243 },
+  { id: 3, received_at: "2026-11-04T18:02:00Z", event: "media.play", plex_account_id: 21693055, plex_account_title: "alexwatches", plex_account_thumb: null, media_title: "Parasite", tmdb_id: 496243 },
+  { id: 2, received_at: "2026-11-03T21:15:00Z", event: "media.scrobble", plex_account_id: 21722565, plex_account_title: "Jacob", plex_account_thumb: null, media_title: "Up", tmdb_id: 14160 },
+  { id: 1, received_at: "2026-11-03T19:30:00Z", event: "media.play", plex_account_id: 21722565, plex_account_title: "Jacob", plex_account_thumb: null, media_title: "Up", tmdb_id: 14160 },
 ];
