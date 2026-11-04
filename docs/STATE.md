@@ -1,41 +1,31 @@
 # Current state
-**Last updated:** 2026-11-02
-**Current focus:** Try out TMDB lookup and movie-card/review designs on the lab page; invite the family.
+**Last updated:** 2026-11-04
+**Current focus:** Decide how a club "round" works (pick, deadline, reviews, points) so notifications and reminders have something to attach to.
 
-## Done this session
-- Site is live at https://hobsonmovieclub.com (Pages on every merge, DEC-003); logo banner, icons, branded email templates (supabase/email-templates/), invites working via Resend. Survey v2 (13 questions) is live.
-- Lab test page `lab.html` (search, movie card, review section; `?mock=1` shows it without a key). TMDB function deployed to Supabase (DEC-004); login protection checked, real searches still to be tested by the owner on the live lab page.
+## Done (recent sessions)
+- Live at https://hobsonmovieclub.com: GitHub Pages publishes on every merge to `main` (DEC-003). Logo, icons, branded login/invite emails (Resend), invite-only login.
+- Survey v2 (13 questions) is live; owner-only admin page (`admin.html`) shows results by question and by person (DEC-006).
+- Admin Members & Plex: link members to Plex accounts by typed Plex ID, name as fallback; couples can share one account (DEC-007, DEC-009).
+- Plex webhook receiver logs movies started/finished; Plex activity tab shows who (DEC-008). Tested with real events (owner + a managed user). No Plex token is stored.
+- Test notifications work on a real Chrome device: installable-app files, "Turn on notifications" card, admin Notifications tab, `send-push` function (DEC-010).
+- TMDB lookup works through a Supabase function (DEC-004); lab page (`lab.html`) has search, movie card, and a browser-only review preview.
+- CI now runs the project tests; daily keep-alive stops Supabase pausing (DEC-005). Webhook secret rotated. `.env.example` lists secret names.
 
 ## In progress
-- Branch: `main`. Owner to sign in on hobsonmovieclub.com, open /lab.html and try a real search (needs secret `TMDB_READ_TOKEN` set in Supabase).
-
-## Decided (ideas, nothing built yet)
-- Admin dashboard (owner only, enforced in the database, not just hidden): survey results, then link Plex usernames (several per member, e.g. a spouse) to members.
-- Plex "finished watching" alert via Plex webhook (owner has Plex Pass), once per person per movie; push notifications only (no email besides login/invites) plus an in-app inbox. Watching on Plex is never required to rate/review; add an "I watched it" button.
-- On pick: check Overseerr (reachable from the internet) for the movie, store its Plex link and status in the database, optionally request it if missing.
-
-## Admin page
-- `admin.html` is live once merged: survey results by question and by person. Migration applied, owner is the first admin (DEC-006).
-
-## Notifications test setup (live and verified)
-- Live: installable-app files, member "Turn on notifications" card, admin Notifications tab, `send-push` function, migration `20261104000500`, VAPID public key in `js/push.js`. Verified 2026-11-04: the owner turned notifications on in Chrome and a test arrived (1 device registered, test sends logged). Next: the round/pick structure so reminders and prompts have something to attach to; then automatic sends (Plex finished-watching, pg_cron reminders). See docs/areas/notifications.md.
-
-## Plex alerts (phase 1 and ID linking live)
-- Live and tested with real events (owner and a managed user): webhook receiver, `plex_events`, Plex activity tab. Link members by typed Plex ID (DEC-009), name as fallback; migration `20261104000400` applied. Owner to link their own ID (21693055) and managed accounts under Members & Plex. Next: the actual "finished watching" notification (once per person per movie).
-- Owner to do sometime: rotate `PLEX_WEBHOOK_SECRET` (it appears in Supabase logs) and update the webhook address in Plex.
-
-## Members & Plex (done)
-- Admin "Members & Plex" section: link Plex usernames to members (several per member; one shared account can go to several members, e.g. a couple). Migration applied (DEC-007). Next: Plex webhook receiver that alerts every member linked to the account.
+- Branch: `main`, clean. Nothing half-done. Only 2 members invited so far (owner + 1); both answered the survey.
 
 ## Next steps
-1. Confirm real TMDB searches work on the live lab page; then decide the movie card and review design.
-2. Invite the family to the survey; read their answers in the Supabase dashboard.
-3. Decide the club structure from the survey, then design reviews table, picking flow, points game.
-4. PWA install + notifications (later).
+1. Draft the round/pick design (a short plan in `docs/areas/`) using the survey answers; owner reacts before anything is built.
+2. Owner: invite the family; link each member's Plex ID(s) under Members & Plex (owner's own ID is on the Plex activity tab).
+3. Build rounds, picks and reviews tables, then automatic notifications: finished-watching review prompt (Plex webhook), reminders 2 days / 1 day before the end (pg_cron), pick turn, reviews revealed. Once-only via `notification_log` (see docs/areas/notifications.md).
+4. On pick: check the owner's Overseerr (internet-reachable) for the movie, store its Plex link/status, optionally request it.
+5. Later: in-app inbox as a fallback for people who don't install; points game if the survey wants it.
 
 ## Open questions for the user
-- Plex availability of Best Picture nominees: decide before the picking feature.
+- Best Picture nominees are not always on Plex: how should a pick handle that?
+- What counts as "watched" for reminders: Plex finished, a review, an "I watched it" button (a review should always count).
+- Points game and prize: keep, drop, or decide after the family answers the survey?
 
 ## Deferred housekeeping
-- (done in PR "chore: run the tests in CI") tests now run in CI.
-- Dashboard + PWA + points game: add to ROADMAP when ready to plan.
+- Add dashboard, PWA install and points game to `docs/ROADMAP.md` when ready to plan.
+- Owner's Chrome is the supported browser; Brave on Android needs push enabled in its settings, iPhone needs Add to Home Screen.
