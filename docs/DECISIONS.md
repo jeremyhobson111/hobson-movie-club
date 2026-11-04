@@ -22,3 +22,11 @@
 - **Decision:** `.github/workflows/pages.yml` deploys the repo to GitHub Pages on every push to `main`. This replaces the DEC-002 rule "do not auto-publish on merge", and the old rule that nothing is released until the owner asks (tags/releases are now optional milestone markers).
 - **Alternatives considered:** Manual "Publish" button (workflow_dispatch): safer but extra clicks; separate publish branch: more moving parts.
 - **Consequences:** A merge is live within a couple of minutes, so only ready work is merged and login/saving is tested locally first. No previews. Roll back with a revert PR. Also decided: the survey switched to the shorter v2 questions before the first publish.
+
+## DEC-004: TMDB lookups go through a Supabase Edge Function
+- **Date:** 2026-11-04
+- **Status:** proposed (function written, not yet deployed; owner to approve and set the secret)
+- **Context:** Movie search, posters and details come from TMDB. Its token must not be in browser code on a public site.
+- **Decision:** One Edge Function, `supabase/functions/tmdb`, holds the token as the Supabase secret `TMDB_READ_TOKEN`. The browser calls it with the person's login token; it only serves signed-in users, only allows our site origins, and returns a trimmed result (search list, or one movie with cast, trailer, US streaming, rating). The site shows the TMDB attribution notice.
+- **Alternatives considered:** Token in the browser (rejected: public); a separate server (rejected: a third service).
+- **Consequences:** Needs a deploy of the function and the secret. Free tier limits apply. Non-commercial use only under TMDB terms (fine for a family club; revisit if it is ever sold). TMDB does not know about Plex, so "available on Plex" is a separate question.

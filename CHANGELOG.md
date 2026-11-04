@@ -12,5 +12,6 @@ All notable changes. Format based on Keep a Changelog; versions follow semver.
 - Survey question 7: removed the "Couldn't easily find or watch it" option.
 - Login page no longer says the code is 6 digits (Supabase sends 8).
 - Fixed a white strip at the bottom on phones while the address bar hides/shows (background is now a fixed layer sized to the tallest screen).
+- Lab test page (lab.html): TMDB movie search, movie card and a review section (reviews saved in the browser only). TMDB lookup function written (not deployed yet).
 - Survey replaced with the shorter v2 (13 questions about the old club, a points game and a phone app).
 - Site now publishes to GitHub Pages on every merge to `main` (DEC-003).
