@@ -4,6 +4,7 @@
 
 ## Files
 - `supabase/functions/tmdb/index.ts`: the Edge Function (search + movie details). Secret `TMDB_READ_TOKEN`. See DEC-004.
+- `supabase/functions/seerr/index.ts`: read-only "is it on Plex?" check against the owner's Seerr. Secrets `SEERR_URL`, `SEERR_API_KEY`. See DEC-011. Check it with `node --experimental-strip-types --no-warnings tests/seerr.check.mjs`.
 - `lab.html`, `js/lab.js`, `css/lab.css`: search, movie card, review section. `js/lab-mock.js` + `lab.html?mock=1` shows it with sample data and no login or key.
 - `js/supabase.js` `callFunction`: calls one of our Supabase functions (TMDB, test notifications) as the signed-in person. `js/dom.js`: shared element builder.
 
@@ -12,3 +13,5 @@
 - TMDB attribution text must stay in the page footer.
 - TMDB's streaming data (JustWatch) lists services and rent/buy, not Plex.
 - Poster/backdrop images load straight from image.tmdb.org.
+- The movie card's "On our Plex?" line comes from the `seerr` function. In `lab.html?mock=1`, Parasite shows as on Plex and anything else as not requested.
+- Seerr statuses: none = not requested, 2 requested, 3 processing, 4 partial, 5 available. `plexUrl` only appears if Seerr is linked to Plex.

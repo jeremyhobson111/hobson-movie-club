@@ -36,3 +36,5 @@ jobs:
         run: node --experimental-strip-types --no-warnings tests/plex-webhook.check.mjs
       - name: Send-push function checks
         run: node --experimental-strip-types --no-warnings tests/send-push.check.mjs
+      - name: Seerr status function checks
+        run: node --experimental-strip-types --no-warnings tests/seerr.check.mjs
