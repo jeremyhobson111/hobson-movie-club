@@ -30,7 +30,7 @@ const cinema = {
 const all = [parasite, cinema];
 
 export function mockCall(params) {
-  // Pretend Overseerr: Parasite is on Plex, anything else was never requested.
+  // Pretend Seerr: Parasite is on Plex, anything else was never requested.
   if (params.action === "plex") return params.id === "496243" ? { status: "available", plexUrl: null } : { status: "not_requested", plexUrl: null };
   if (params.action === "search") {
     const q = (params.q ?? "").toLowerCase();

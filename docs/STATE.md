@@ -18,7 +18,7 @@
 1. Draft the round/pick design (a short plan in `docs/areas/`) using the survey answers; owner reacts before anything is built.
 2. Owner: invite the family; link each member's Plex ID(s) under Members & Plex (owner's own ID is on the Plex activity tab).
 3. Build rounds, picks and reviews tables, then automatic notifications: finished-watching review prompt (Plex webhook), reminders 2 days / 1 day before the end (pg_cron), pick turn, reviews revealed. Once-only via `notification_log` (see docs/areas/notifications.md).
-4. On pick: check the owner's Overseerr (internet-reachable) for the movie, store its Plex link/status, optionally request it.
+4. On pick: check the owner's Seerr (internet-reachable) for the movie, store its Plex link/status, optionally request it.
 5. Later: in-app inbox as a fallback for people who don't install; points game if the survey wants it.
 
 ## Open questions for the user

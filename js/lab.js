@@ -15,10 +15,10 @@ async function tmdb(params) {
   return r.data;
 }
 
-// Is the movie on the club's Plex? (Asks Overseerr through our function; read-only.)
+// Is the movie on the club's Plex? (Asks Seerr through our function; read-only.)
 async function plexStatus(id) {
   if (mock) return mockCall({ action: "plex", id: String(id) });
-  const r = await api.callFunction(session, "overseerr", { params: { id: String(id) } });
+  const r = await api.callFunction(session, "seerr", { params: { id: String(id) } });
   session = r.session;
   return r.data;
 }

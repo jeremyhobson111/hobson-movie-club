@@ -1,6 +1,6 @@
-// Asks the owner's Overseerr whether a movie is already on Plex. Read-only: it never requests
-// anything. The Overseerr address and API key live here as Supabase secrets (OVERSEERR_URL,
-// OVERSEERR_API_KEY) and never reach the browser. Only logged-in people may call it.
+// Asks the owner's Seerr whether a movie is already on Plex. Read-only: it never requests
+// anything. The Seerr address and API key live here as Supabase secrets (SEERR_URL,
+// SEERR_API_KEY) and never reach the browser. Only logged-in people may call it.
 //   GET ?id=<tmdb id> -> { status, plexUrl }
 // status is one of: available | partial | processing | requested | not_requested
 const ALLOWED_ORIGINS = [
@@ -10,7 +10,7 @@ const ALLOWED_ORIGINS = [
   "http://localhost:8000",
 ];
 
-// Overseerr's media status numbers (mediaInfo.status). No mediaInfo at all means nobody asked yet.
+// Seerr's media status numbers (mediaInfo.status). No mediaInfo at all means nobody asked yet.
 const STATUS: Record<number, string> = { 2: "requested", 3: "processing", 4: "partial", 5: "available" };
 
 // Supabase has already checked the token's signature (verify_jwt). The public anon key is also
@@ -40,22 +40,22 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers });
   if (jwtRole(req) !== "authenticated") return reply({ error: "Please sign in." }, 401);
 
-  const base = (Deno.env.get("OVERSEERR_URL") ?? "").replace(/\/+$/, "");
-  const key = Deno.env.get("OVERSEERR_API_KEY");
-  if (!base || !key) return reply({ error: "Overseerr has not been set up yet." }, 500);
+  const base = (Deno.env.get("SEERR_URL") ?? "").replace(/\/+$/, "");
+  const key = Deno.env.get("SEERR_API_KEY");
+  if (!base || !key) return reply({ error: "Seerr has not been set up yet." }, 500);
 
   const id = new URL(req.url).searchParams.get("id") ?? "";
   if (!/^\d{1,9}$/.test(id)) return reply({ error: "Bad movie id." }, 400);
 
   try {
     const res = await fetch(`${base}/api/v1/movie/${id}`, { headers: { "X-Api-Key": key, accept: "application/json" } });
-    if (res.status === 404) return reply({ error: "Overseerr doesn't know this movie." }, 404);
-    if (!res.ok) return reply({ error: `Overseerr error (${res.status}).` }, 502);
+    if (res.status === 404) return reply({ error: "Seerr doesn't know this movie." }, 404);
+    if (!res.ok) return reply({ error: `Seerr error (${res.status}).` }, 502);
     const info = (await res.json())?.mediaInfo;
     const plexUrl = typeof info?.plexUrl === "string" && /^https?:\/\//.test(info.plexUrl) ? info.plexUrl : null;
     return reply({ status: STATUS[info?.status] ?? "not_requested", plexUrl });
   } catch {
     // Network failure: the owner's server is probably off or unreachable.
-    return reply({ error: "Couldn't reach Overseerr." }, 502);
+    return reply({ error: "Couldn't reach Seerr." }, 502);
   }
 });

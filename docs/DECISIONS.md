@@ -79,10 +79,10 @@
 - **Alternatives considered:** Writing Web Push encryption ourselves (rejected: easy to get subtly wrong); email (rejected by the owner); a hosted push service (a third service).
 - **Consequences:** The key pair must never change. Dead devices are removed when the push service reports them gone. The timer-driven reminders (pg_cron) and event-driven sends come later and reuse this sending code.
 
-## DEC-011: Overseerr status check through one read-only Edge Function
+## DEC-011: Seerr status check through one read-only Edge Function
 - **Date:** 2026-11-04
-- **Status:** accepted for the read-only check. Function `overseerr` is written and tested locally; not deployed and secrets not set yet.
-- **Context:** When a movie is picked, the club needs to know if it is already on Plex. The owner's Overseerr is reachable from the internet and knows what is on Plex and what has been requested.
-- **Decision:** New Edge Function `overseerr` (verify_jwt on, signed-in members only) calls `GET /api/v1/movie/<tmdb id>` on the owner's Overseerr and returns only `{ status, plexUrl }`. `OVERSEERR_URL` and `OVERSEERR_API_KEY` are Supabase secrets, never in the browser. It never requests anything. The movie card on the lab page shows the result.
-- **Alternatives considered:** Calling Overseerr from the browser (rejected: would expose the API key); asking TMDB (it does not know about Plex).
+- **Status:** accepted for the read-only check. Function `seerr` is written and tested locally; not deployed and secrets not set yet.
+- **Context:** When a movie is picked, the club needs to know if it is already on Plex. The owner's Seerr is reachable from the internet and knows what is on Plex and what has been requested.
+- **Decision:** New Edge Function `seerr` (verify_jwt on, signed-in members only) calls `GET /api/v1/movie/<tmdb id>` on the owner's Seerr and returns only `{ status, plexUrl }`. `SEERR_URL` and `SEERR_API_KEY` are Supabase secrets, never in the browser. It never requests anything. The movie card on the lab page shows the result.
+- **Alternatives considered:** Calling Seerr from the browser (rejected: would expose the API key); asking TMDB (it does not know about Plex).
 - **Consequences:** If the owner's server is off, the card says it couldn't check, and nothing else breaks. Requesting a movie (owner only) is a later, separate step.
