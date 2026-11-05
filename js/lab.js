@@ -15,6 +15,22 @@ async function tmdb(params) {
   return r.data;
 }
 
+// Is the movie on the club's Plex? (Asks Overseerr through our function; read-only.)
+async function plexStatus(id) {
+  if (mock) return mockCall({ action: "plex", id: String(id) });
+  const r = await api.callFunction(session, "overseerr", { params: { id: String(id) } });
+  session = r.session;
+  return r.data;
+}
+
+const PLEX_TEXT = {
+  available: "On Plex, ready to watch.",
+  partial: "Only partly on Plex so far.",
+  processing: "Requested and downloading now.",
+  requested: "Requested, waiting for approval or download.",
+  not_requested: "Not on Plex yet, and nobody has requested it.",
+};
+
 // ---------- reviews (this browser only) ----------
 const KEY = "hmc-lab-reviews";
 function readReviews() { try { return JSON.parse(localStorage.getItem(KEY)) ?? {}; } catch { return {}; } }
@@ -108,6 +124,13 @@ function renderMovie(m, backQuery) {
   ];
   const where = [["Stream", m.where.stream], ["Rent", m.where.rent], ["Buy", m.where.buy]].filter(([, l]) => l.length);
 
+  // Filled in after the card is shown; a failure here must never break the card itself.
+  const plexBox = h("div", {}, h("h3", { textContent: "On our Plex?" }), h("p", { className: "muted", textContent: "Checking…" }));
+  const plexLine = (node) => plexBox.lastChild.replaceWith(node);
+  plexStatus(m.id).then(({ status, plexUrl }) => {
+    plexLine(h("p", {}, PLEX_TEXT[status] ?? "Unknown.", plexUrl ? [" ", ext(plexUrl, "Open in Plex")] : null));
+  }).catch((e) => plexLine(h("p", { className: "muted", textContent: `Couldn't check Plex: ${e.message}` })));
+
   const card = h("article", { className: "movie card" },
     m.backdrop ? h("img", { className: "backdrop", src: m.backdrop, alt: "" }) : null,
     h("div", { className: "movie-top" },
@@ -128,6 +151,7 @@ function renderMovie(m, backQuery) {
         c.photo ? h("img", { src: c.photo, alt: "", loading: "lazy" }) : h("div", { className: "cast-photo placeholder", textContent: c.name[0] }),
         h("strong", { textContent: c.name }),
         h("span", { className: "muted", textContent: c.character }))))) : null,
+    plexBox,
     h("div", {}, h("h3", { textContent: "Where to watch (US)" }),
       where.length ? where.map(([label, list]) => h("p", {}, h("span", { className: "muted", textContent: `${label}: ` }), list.join(", ")))
         : h("p", { className: "muted", textContent: "Not listed in TMDB's streaming data. (The club plan is Plex, which TMDB doesn't know about.)" })));
