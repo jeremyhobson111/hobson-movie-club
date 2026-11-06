@@ -45,6 +45,10 @@ fake = { status: 200, body: { ratings: [{ source: "imdb", value: null }, { sourc
 body = await (await get("?id=1")).json();
 check("missing scores are null and numeric strings are accepted", body.imdb === null && body.rtCritic === 88 && body.rtAudience === null);
 
+fake = { status: 200, body: { ratings: [{ source: "popcorn", value: null, score: 87 }] } };
+body = await (await get("?id=1")).json();
+check("the audience score is found under the name popcorn, and score is used when value is empty", body.rtAudience === 87);
+
 fake = { status: 200, body: {} };
 body = await (await get("?id=1")).json();
 check("no ratings at all gives all-null, not an error", body.imdb === null && body.rtCritic === null && body.rtAudience === null && body.sources.length === 0);

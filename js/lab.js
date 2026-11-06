@@ -119,6 +119,20 @@ function backButton(q) {
   return b;
 }
 
+// Small drawn stand-ins for each site's mark (not the official artwork).
+const ICONS = {
+  tmdb: '<svg viewBox="0 0 56 28" aria-hidden="true"><rect width="56" height="28" rx="6" fill="#0d253f"/><text x="28" y="19.5" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="15" fill="#01b4e4">TMDB</text></svg>',
+  imdb: '<svg viewBox="0 0 56 28" aria-hidden="true"><rect width="56" height="28" rx="5" fill="#f5c518"/><text x="28" y="20" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="17" fill="#000">IMDb</text></svg>',
+  tomato: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="18" r="12" fill="#fa320a"/><path d="M16 7c-2-3-5-3-7-2 2 1 3 2 3 4-2-1-4 0-5 1 3 0 5 1 6 2 1-1 3-2 6-2-1-2-3-3-5-3 0-2 1-3 3-3-1 0-1 0-1 3z" fill="#0ac855"/></svg>',
+  popcorn: '<svg viewBox="0 0 32 32" aria-hidden="true"><g fill="#ffd34e"><circle cx="9" cy="9" r="4.5"/><circle cx="16" cy="6.5" r="5"/><circle cx="23" cy="9" r="4.5"/><circle cx="12" cy="13" r="4"/><circle cx="20" cy="13" r="4"/></g><path d="M6 14h20l-3 16H9z" fill="#fff"/><path d="M10.5 14l1.2 16h-2.7zM17 14v16h-2V14zM22.5 14l-1.2 16h2.7z" fill="#e8231a"/></svg>',
+};
+function ratingTile(icon, value, label, href) {
+  const tile = h(href ? "a" : "div", { className: "rating", ...(href ? { href, target: "_blank", rel: "noopener" } : {}) },
+    h("span", { className: "rating-icon" }), h("span", { className: "num", textContent: value }), h("span", { className: "label", textContent: label }));
+  tile.firstChild.innerHTML = ICONS[icon]; // fixed strings above, never data from outside
+  return tile;
+}
+
 const chip = (t) => h("span", { className: "chip", textContent: t });
 const hours = (min) => (min ? `${Math.floor(min / 60)}h ${min % 60}m` : null);
 const ext = (href, textContent) => h("a", { href, target: "_blank", rel: "noopener", textContent });
@@ -127,8 +141,6 @@ function renderMovie(m, backQuery) {
   const meta = [m.year, m.certification, hours(m.runtime)].filter(Boolean).join(" · ");
   const links = [
     m.trailerUrl ? ext(m.trailerUrl, "▶ Trailer") : null,
-    ext(m.tmdbUrl, "TMDB"),
-    m.imdbId ? ext(`https://www.imdb.com/title/${m.imdbId}/`, "IMDb") : null,
   ];
   const where = [["Stream", m.where.stream], ["Rent", m.where.rent], ["Buy", m.where.buy]].filter(([, l]) => l.length);
 
@@ -139,17 +151,25 @@ function renderMovie(m, backQuery) {
     plexLine(h("p", {}, PLEX_TEXT[status] ?? "Unknown.", plexUrl ? [" ", ext(plexUrl, "Open in Plex")] : null));
   }).catch((e) => plexLine(h("p", { className: "muted", textContent: `Couldn't check Plex: ${e.message}` })));
 
-  // Same idea: filled in later, and a failure only shows a quiet note.
-  const ratingsLine = h("p", { className: "score muted", textContent: "Checking IMDb and Rotten Tomatoes…" });
-  otherRatings(m.id).then(({ imdb, rtCritic, rtAudience }) => {
-    const parts = [
-      imdb != null ? [h("strong", { textContent: imdb.toFixed(1) }), " IMDb"] : null,
-      rtCritic != null ? [h("strong", { textContent: `${rtCritic}%` }), " Rotten Tomatoes critics"] : null,
-      rtAudience != null ? [h("strong", { textContent: `${rtAudience}%` }), " audience"] : null,
-    ].filter(Boolean);
-    ratingsLine.className = "score";
-    ratingsLine.replaceChildren(...(parts.length ? parts.flatMap((p, i) => (i ? [" · ", ...p] : p)) : ["No IMDb or Rotten Tomatoes scores found."]));
-  }).catch((e) => { ratingsLine.textContent = `Couldn't get IMDb or Rotten Tomatoes scores: ${e.message}`; });
+  // Four score tiles. TMDB is known now; the other three fill in later, and a failure only
+  // leaves dashes and a quiet note (it must never break the card).
+  const tmdbTile = ratingTile("tmdb", m.rating ? m.rating.toFixed(1) : "–", m.votes ? `${m.votes.toLocaleString()} votes` : "TMDB", m.tmdbUrl);
+  const imdbTile = ratingTile("imdb", "…", "IMDb", m.imdbId ? `https://www.imdb.com/title/${m.imdbId}/` : null);
+  const criticTile = ratingTile("tomato", "…", "Tomatometer");
+  const audienceTile = ratingTile("popcorn", "…", "Audience score");
+  const ratingsNote = h("p", { className: "hint ratings-note" });
+  const setTile = (tile, value, suffix = "") => { tile.querySelector(".num").textContent = value == null ? "–" : `${value}${suffix}`; };
+  otherRatings(m.id).then(({ imdb, rtCritic, rtAudience, sources }) => {
+    setTile(imdbTile, imdb == null ? null : imdb.toFixed(1));
+    setTile(criticTile, rtCritic, "%");
+    setTile(audienceTile, rtAudience, "%");
+    // Test page only: shows which score names MDBList sent, to catch a name we guessed wrong.
+    ratingsNote.textContent = `MDBList sent: ${(sources ?? []).join(", ") || "nothing"}`;
+  }).catch((e) => {
+    [imdbTile, criticTile, audienceTile].forEach((t) => setTile(t, null));
+    ratingsNote.textContent = `Couldn't get IMDb or Rotten Tomatoes scores: ${e.message}`;
+  });
+  const ratings = h("div", { className: "ratings-wrap" }, h("div", { className: "ratings" }, tmdbTile, imdbTile, criticTile, audienceTile), ratingsNote);
 
   const card = h("article", { className: "movie card" },
     m.backdrop ? h("img", { className: "backdrop", src: m.backdrop, alt: "" }) : null,
@@ -160,10 +180,7 @@ function renderMovie(m, backQuery) {
         h("p", { className: "muted", textContent: meta }),
         m.tagline ? h("p", { className: "tagline", textContent: `“${m.tagline}”` }) : null,
         h("div", { className: "chips" }, m.genres.map(chip)),
-        m.rating ? h("p", { className: "score" },
-          h("strong", { textContent: m.rating.toFixed(1) }), " / 10 on TMDB ",
-          h("span", { className: "muted", textContent: `(${(m.rating / 2).toFixed(1)} of 5 · ${m.votes.toLocaleString()} votes)` })) : null,
-        ratingsLine,
+        ratings,
         m.director.length ? h("p", {}, h("span", { className: "muted", textContent: "Directed by " }), m.director.join(", ")) : null,
         h("p", { className: "links" }, links))),
     m.overview ? h("p", { className: "overview", textContent: m.overview }) : null,

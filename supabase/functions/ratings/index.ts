@@ -24,9 +24,17 @@ function jwtRole(req: Request): string | null {
 }
 
 // MDBList sends { ratings: [{ source: "imdb" | "tomatoes" | "tomatoesaudience" | ..., value, score, ... }] }.
-function pick(ratings: any[], source: string): number | null {
-  const n = Number(ratings.find((r) => r?.source === source)?.value);
-  return Number.isFinite(n) && n > 0 ? n : null;
+// The audience score has gone by more than one name, so each score lists the names to try.
+// If `value` is empty it falls back to `score`.
+function pick(ratings: any[], names: string[]): number | null {
+  for (const name of names) {
+    const r = ratings.find((x) => x?.source === name);
+    for (const v of [r?.value, r?.score]) {
+      const n = v == null || v === "" ? NaN : Number(v);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+  }
+  return null;
 }
 
 Deno.serve(async (req) => {
@@ -58,9 +66,9 @@ Deno.serve(async (req) => {
     const ratings = (await res.json())?.ratings;
     const list = Array.isArray(ratings) ? ratings : [];
     return reply({
-      imdb: pick(list, "imdb"),
-      rtCritic: pick(list, "tomatoes"),
-      rtAudience: pick(list, "tomatoesaudience"),
+      imdb: pick(list, ["imdb"]),
+      rtCritic: pick(list, ["tomatoes"]),
+      rtAudience: pick(list, ["tomatoesaudience", "popcorn", "audience"]),
       sources: list.map((r) => r?.source).filter((s) => typeof s === "string"),
     });
   } catch {
