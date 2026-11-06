@@ -31,6 +31,8 @@ const all = [parasite, cinema];
 
 export function mockCall(params) {
   // Pretend Seerr: Parasite is on Plex, anything else was never requested.
+  // Pretend MDBList: Parasite scores high; anything else gets made-up low Rotten Tomatoes scores (to see the rotten icons).
+  if (params.action === "ratings") return params.id === "496243" ? { imdb: 8.5, rtCritic: 99, rtAudience: 90, sources: ["imdb", "tomatoes", "tomatoesaudience"] } : { imdb: 8.6, rtCritic: 45, rtAudience: 52, sources: ["imdb", "tomatoes", "tomatoesaudience"] };
   if (params.action === "plex") return params.id === "496243" ? { status: "available", plexUrl: null } : { status: "not_requested", plexUrl: null };
   if (params.action === "search") {
     const q = (params.q ?? "").toLowerCase();

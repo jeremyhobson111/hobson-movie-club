@@ -4,6 +4,7 @@
 
 ## Files
 - `supabase/functions/tmdb/index.ts`: the Edge Function (search + movie details). Secret `TMDB_READ_TOKEN`. See DEC-004.
+- `supabase/functions/ratings/index.ts`: read-only IMDb and Rotten Tomatoes (critic + audience) scores via MDBList. Secret `MDBLIST_API_KEY`. See DEC-013. Check it with `node --experimental-strip-types --no-warnings tests/ratings.check.mjs`. The response lists the rating names MDBList sent (`sources`), to catch a wrong guess about a name.
 - `supabase/functions/seerr/index.ts`: read-only "is it on Plex?" check against the owner's Seerr. Secrets `SEERR_URL`, `SEERR_API_KEY`. See DEC-011. Check it with `node --experimental-strip-types --no-warnings tests/seerr.check.mjs`.
 - `lab.html`, `js/lab.js`, `css/lab.css`: search, movie card, review section. `js/lab-mock.js` + `lab.html?mock=1` shows it with sample data and no login or key.
 - `js/supabase.js` `callFunction`: calls one of our Supabase functions (TMDB, test notifications) as the signed-in person. `js/dom.js`: shared element builder.

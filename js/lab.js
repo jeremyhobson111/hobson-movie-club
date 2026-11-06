@@ -23,6 +23,14 @@ async function plexStatus(id) {
   return r.data;
 }
 
+// IMDb and Rotten Tomatoes scores (asks MDBList through our function; read-only).
+async function otherRatings(id) {
+  if (mock) return mockCall({ action: "ratings", id: String(id) });
+  const r = await api.callFunction(session, "ratings", { params: { id: String(id) } });
+  session = r.session;
+  return r.data;
+}
+
 const PLEX_TEXT = {
   available: "On Plex, ready to watch.",
   partial: "Only partly on Plex so far.",
@@ -111,6 +119,14 @@ function backButton(q) {
   return b;
 }
 
+// Score logos (files in img/). Rotten Tomatoes rule: 60% or more is "fresh" (red tomato / full popcorn
+// bucket), under 60% is "rotten" (green splat / spilled bucket). We can't tell "Certified Fresh", so it isn't shown.
+const LOGO = { tmdb: "img/tmdb.png", imdb: "img/imdb.webp", fresh: "img/rt-fresh.png", rotten: "img/rt-rotten.png", popcorn: "img/rt-popcorn.png", spilled: "img/rt-popcorn-spilled.png" };
+function ratingTile(icon, value, label, href) {
+  return h(href ? "a" : "div", { className: "rating", ...(href ? { href, target: "_blank", rel: "noopener" } : {}) },
+    h("img", { className: "rating-icon", src: LOGO[icon], alt: "" }), h("span", { className: "num", textContent: value }), h("span", { className: "label", textContent: label }));
+}
+
 const chip = (t) => h("span", { className: "chip", textContent: t });
 const hours = (min) => (min ? `${Math.floor(min / 60)}h ${min % 60}m` : null);
 const ext = (href, textContent) => h("a", { href, target: "_blank", rel: "noopener", textContent });
@@ -119,8 +135,6 @@ function renderMovie(m, backQuery) {
   const meta = [m.year, m.certification, hours(m.runtime)].filter(Boolean).join(" · ");
   const links = [
     m.trailerUrl ? ext(m.trailerUrl, "▶ Trailer") : null,
-    ext(m.tmdbUrl, "TMDB"),
-    m.imdbId ? ext(`https://www.imdb.com/title/${m.imdbId}/`, "IMDb") : null,
   ];
   const where = [["Stream", m.where.stream], ["Rent", m.where.rent], ["Buy", m.where.buy]].filter(([, l]) => l.length);
 
@@ -131,6 +145,26 @@ function renderMovie(m, backQuery) {
     plexLine(h("p", {}, PLEX_TEXT[status] ?? "Unknown.", plexUrl ? [" ", ext(plexUrl, "Open in Plex")] : null));
   }).catch((e) => plexLine(h("p", { className: "muted", textContent: `Couldn't check Plex: ${e.message}` })));
 
+  // Four score tiles. TMDB is known now; the other three fill in later, and a failure only
+  // leaves dashes and a quiet note (it must never break the card).
+  const tmdbTile = ratingTile("tmdb", m.rating ? m.rating.toFixed(1) : "–", m.votes ? `${m.votes.toLocaleString()} votes` : "TMDB", m.tmdbUrl);
+  const imdbTile = ratingTile("imdb", "…", "IMDb", m.imdbId ? `https://www.imdb.com/title/${m.imdbId}/` : null);
+  const criticTile = ratingTile("fresh", "…", "Tomatometer");
+  const audienceTile = ratingTile("popcorn", "…", "Audience score");
+  const ratingsNote = h("p", { className: "hint ratings-note" });
+  const setTile = (tile, value, suffix = "") => { tile.querySelector(".num").textContent = value == null ? "–" : `${value}${suffix}`; };
+  otherRatings(m.id).then(({ imdb, rtCritic, rtAudience }) => {
+    setTile(imdbTile, imdb == null ? null : imdb.toFixed(1));
+    setTile(criticTile, rtCritic, "%");
+    setTile(audienceTile, rtAudience, "%");
+    if (rtCritic != null) criticTile.querySelector("img").src = LOGO[rtCritic >= 60 ? "fresh" : "rotten"];
+    if (rtAudience != null) audienceTile.querySelector("img").src = LOGO[rtAudience >= 60 ? "popcorn" : "spilled"];
+  }).catch((e) => {
+    [imdbTile, criticTile, audienceTile].forEach((t) => setTile(t, null));
+    ratingsNote.textContent = `Couldn't get IMDb or Rotten Tomatoes scores: ${e.message}`;
+  });
+  const ratings = h("div", { className: "ratings-wrap" }, h("div", { className: "ratings" }, tmdbTile, imdbTile, criticTile, audienceTile), ratingsNote);
+
   const card = h("article", { className: "movie card" },
     m.backdrop ? h("img", { className: "backdrop", src: m.backdrop, alt: "" }) : null,
     h("div", { className: "movie-top" },
@@ -140,9 +174,7 @@ function renderMovie(m, backQuery) {
         h("p", { className: "muted", textContent: meta }),
         m.tagline ? h("p", { className: "tagline", textContent: `“${m.tagline}”` }) : null,
         h("div", { className: "chips" }, m.genres.map(chip)),
-        m.rating ? h("p", { className: "score" },
-          h("strong", { textContent: m.rating.toFixed(1) }), " / 10 on TMDB ",
-          h("span", { className: "muted", textContent: `(${(m.rating / 2).toFixed(1)} of 5 · ${m.votes.toLocaleString()} votes)` })) : null,
+        ratings,
         m.director.length ? h("p", {}, h("span", { className: "muted", textContent: "Directed by " }), m.director.join(", ")) : null,
         h("p", { className: "links" }, links))),
     m.overview ? h("p", { className: "overview", textContent: m.overview }) : null,
