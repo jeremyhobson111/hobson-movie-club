@@ -44,10 +44,8 @@ Deno.serve(async (req) => {
     "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
     "Vary": "Origin",
     "Content-Type": "application/json",
-    // Scores barely move, and the free plan has a daily limit, so let browsers keep them for a day.
-    "Cache-Control": "private, max-age=86400",
   };
-  const reply = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers });
+  const reply = (body: unknown, status = 200, cache = "no-store") => new Response(JSON.stringify(body), { status, headers: { ...headers, "Cache-Control": cache } });
 
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers });
   if (jwtRole(req) !== "authenticated") return reply({ error: "Please sign in." }, 401);
@@ -65,12 +63,16 @@ Deno.serve(async (req) => {
     if (!res.ok) return reply({ error: `MDBList error (${res.status}).` }, 502);
     const ratings = (await res.json())?.ratings;
     const list = Array.isArray(ratings) ? ratings : [];
-    return reply({
+    const body = {
       imdb: pick(list, ["imdb"]),
       rtCritic: pick(list, ["tomatoes"]),
       rtAudience: pick(list, ["tomatoesaudience", "popcorn", "audience"]),
       sources: list.map((r) => r?.source).filter((s) => typeof s === "string"),
-    });
+    };
+    // Scores barely move and the free plan has a daily limit, so a complete answer may be kept for a day.
+    // An answer with a score missing is kept only a minute, so a fix or a late MDBList update shows up quickly.
+    const complete = body.imdb != null && body.rtCritic != null && body.rtAudience != null;
+    return reply(body, 200, complete ? "private, max-age=86400" : "private, max-age=60");
   } catch {
     return reply({ error: "Couldn't reach MDBList." }, 502);
   }

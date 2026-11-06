@@ -16,7 +16,7 @@ Family members only (small group, not public). Each person logs in with email so
 ## Commands
 - Install: none (no dependencies yet)
 - Run locally: `python -m http.server 8000` from the repo root, then open http://localhost:8000
-- Test: `node --test tests/*.test.mjs`, plus `node --experimental-strip-types --no-warnings tests/plex-webhook.check.mjs` `.../tests/send-push.check.mjs` `.../tests/seerr.check.mjs` and `.../tests/ratings.check.mjs` (Node 22). All but ratings run in CI so far.
+- Test: `node --test tests/*.test.mjs`, plus `node --experimental-strip-types --no-warnings tests/plex-webhook.check.mjs` `.../tests/send-push.check.mjs` `.../tests/seerr.check.mjs` and `.../tests/ratings.check.mjs` (Node 22). All run in CI.
 - Lint/format: none yet
 - Build: none (static files)
 

@@ -39,10 +39,12 @@ r = await get("?id=496243");
 let body = await r.json();
 check("returns IMDb, critic and audience scores", r.status === 200 && body.imdb === 8.5 && body.rtCritic === 99 && body.rtAudience === 90);
 check("lists the rating names it received", body.sources.join() === "imdb,tomatoes,tomatoesaudience,metacritic");
+check("a complete answer may be cached for a day", r.headers.get("cache-control") === "private, max-age=86400");
 check("it asks MDBList by TMDB id with the key, and only reads", calls[0].url === "https://api.mdblist.com/tmdb/movie/496243?apikey=secret-key" && !calls[0].opts.method);
 
 fake = { status: 200, body: { ratings: [{ source: "imdb", value: null }, { source: "tomatoes", value: "88" }] } };
 body = await (await get("?id=1")).json();
+check("an answer with a score missing is cached for only a minute", (await get("?id=1")).headers.get("cache-control") === "private, max-age=60");
 check("missing scores are null and numeric strings are accepted", body.imdb === null && body.rtCritic === 88 && body.rtAudience === null);
 
 fake = { status: 200, body: { ratings: [{ source: "popcorn", value: null, score: 87 }] } };
