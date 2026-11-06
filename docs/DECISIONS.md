@@ -102,3 +102,11 @@
 - **Decision:** New Edge Function `ratings` (verify_jwt on, signed-in members only) calls MDBList by TMDB id and returns `{ imdb, rtCritic, rtAudience, sources }`. `MDBLIST_API_KEY` is a Supabase secret. The free plan allows about 1,000 lookups a day, so browsers may cache a result for a day.
 - **Alternatives considered:** OMDb (no audience score found); scraping Rotten Tomatoes (rejected: against their terms, fragile).
 - **Consequences:** A fourth outside service. If MDBList is down or over its limit, the card just says it couldn't get the scores. The exact field names (`imdb`, `tomatoes`, `tomatoesaudience`) come from MDBList docs found secondhand; `sources` in the response shows the real names if any are wrong.
+
+## DEC-014: Admin invites create an already-confirmed account (Edge Function `invite`)
+- **Date:** 2026-11-06
+- **Status:** accepted; function not deployed yet (needs the owner's OK)
+- **Context:** Six of fourteen invited people could not sign in. A dashboard invite leaves the account unconfirmed until the emailed link is clicked, and Supabase refuses the normal sign-in email for an unconfirmed account while public sign-ups are off ("Signups not allowed for this instance"). Links expire or get used up by mail apps. The six were fixed by hand in the database (2026-11-06).
+- **Decision:** New Edge Function `invite` (verify_jwt on, admins only, checked as the caller). It sends the invite email, then marks the account confirmed with the service key (built-in secret, no new secrets). The admin page's Members & Plex tab has an "Invite a member" box. The invite email also says to just sign in at the site.
+- **Alternatives considered:** Keep dashboard invites and confirm by hand (rejected: easy to forget, needs the database); turn on public sign-ups (rejected: breaks invite-only).
+- **Consequences:** Anyone invited this way can sign in immediately. Invites sent from the Supabase dashboard still have the old problem, so use the admin box instead. Re-inviting an existing address returns "already a member".

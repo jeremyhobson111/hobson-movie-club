@@ -17,3 +17,4 @@
 ## Gotchas
 - Native `replaceChildren` turns `null` into the text "null": only pass nodes (use the `h()` helper in `js/dom.js`).
 - Changing survey questions: bump `SURVEY_VERSION` in `js/logic.js`; older answers are then hidden here.
+- `supabase/functions/invite/`: admin-only invite that also confirms the account (DEC-014). Check it with `node --experimental-strip-types --no-warnings tests/invite.check.mjs`. The Members & Plex tab has the "Invite a member" box.
