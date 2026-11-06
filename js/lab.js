@@ -153,14 +153,12 @@ function renderMovie(m, backQuery) {
   const audienceTile = ratingTile("popcorn", "…", "Audience score");
   const ratingsNote = h("p", { className: "hint ratings-note" });
   const setTile = (tile, value, suffix = "") => { tile.querySelector(".num").textContent = value == null ? "–" : `${value}${suffix}`; };
-  otherRatings(m.id).then(({ imdb, rtCritic, rtAudience, sources }) => {
+  otherRatings(m.id).then(({ imdb, rtCritic, rtAudience }) => {
     setTile(imdbTile, imdb == null ? null : imdb.toFixed(1));
     setTile(criticTile, rtCritic, "%");
     setTile(audienceTile, rtAudience, "%");
     if (rtCritic != null) criticTile.querySelector("img").src = LOGO[rtCritic >= 60 ? "fresh" : "rotten"];
     if (rtAudience != null) audienceTile.querySelector("img").src = LOGO[rtAudience >= 60 ? "popcorn" : "spilled"];
-    // Test page only: shows which score names MDBList sent, to catch a name we guessed wrong.
-    ratingsNote.textContent = `MDBList sent: ${(sources ?? []).join(", ") || "nothing"}`;
   }).catch((e) => {
     [imdbTile, criticTile, audienceTile].forEach((t) => setTile(t, null));
     ratingsNote.textContent = `Couldn't get IMDb or Rotten Tomatoes scores: ${e.message}`;

@@ -97,7 +97,7 @@
 
 ## DEC-013: IMDb and Rotten Tomatoes scores through MDBList (one read-only Edge Function)
 - **Date:** 2026-11-05
-- **Status:** accepted; function written and tested locally, not deployed yet.
+- **Status:** accepted; function deployed 2026-11-05 and tried against real MDBList (it worked for a different movie; Parasite has no audience score in MDBList).
 - **Context:** The owner wants IMDb, Rotten Tomatoes critic and Rotten Tomatoes audience scores on the movie card. TMDB has none of them. OMDb has IMDb and the critic score but no sign of the audience score.
 - **Decision:** New Edge Function `ratings` (verify_jwt on, signed-in members only) calls MDBList by TMDB id and returns `{ imdb, rtCritic, rtAudience, sources }`. `MDBLIST_API_KEY` is a Supabase secret. The free plan allows about 1,000 lookups a day, so browsers may cache a result for a day.
 - **Alternatives considered:** OMDb (no audience score found); scraping Rotten Tomatoes (rejected: against their terms, fragile).
