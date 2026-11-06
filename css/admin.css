@@ -1,12 +1,12 @@
 /* Admin page only. Builds on style.css. */
 .tabs { display: flex; gap: 8px; margin: 12px 0 16px; }
 .tabs button { background: var(--card); color: var(--muted); border: 1px solid var(--line); box-shadow: none; padding: 8px 16px; text-transform: none; letter-spacing: 0; font-weight: 500; }
-.tabs button[aria-pressed=true] { background: linear-gradient(180deg, var(--accent), var(--accent2)); color: #1a1100; font-weight: 700; }
+.tabs button[aria-pressed=true] { background: linear-gradient(180deg, var(--accent), var(--accent2)); color: #0a1020; font-weight: 700; }
 .q-title { margin: 0 0 4px; font-weight: 600; }
 .q-meta { margin: 0 0 12px; color: var(--muted); font-size: .85rem; }
 .bar-row { display: grid; grid-template-columns: minmax(0, 1fr) 2.2rem; gap: 4px 10px; align-items: center; margin: 6px 0; font-size: .95rem; }
 .bar-row .label { grid-column: 1 / -1; }
-.bar { height: 10px; background: #08101e; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.bar { height: 10px; background: #0a1020; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
 .bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); }
 .bar-row .n { text-align: right; color: var(--accent); font-weight: 700; }
 .who { color: var(--muted); font-size: .85rem; }
@@ -27,4 +27,4 @@ button.small { padding: 4px 10px; font-size: .8rem; margin: 0; }
 /* notifications */
 .card label { cursor: default; }
 select, .card input[type=text] { width: 100%; }
-select { background: #08101e; color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px; font: inherit; margin: 4px 0; }
+select { background: #0a1020; color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px; font: inherit; margin: 4px 0; }

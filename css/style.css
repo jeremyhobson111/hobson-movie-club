@@ -1,8 +1,8 @@
-/* Look borrowed from spotle.movie: deep navy, soft white text, gold glowing buttons.
+/* Look: "midnight blue and gold" (design option F-2b): deep navy, soft white text, gold buttons, a curtain stripe above the banner.
    Fonts: only stacks whose first choices exist on Windows, Mac, iOS and Android.
    Don't name a font that only exists on some devices (e.g. Impact is missing on phones);
    if we want a special font later, ship the font file in the repo instead. */
-:root { --bg: #060b14; --card: #0d1626; --text: #eaf0ff; --muted: #7f8bab; --accent: #f0b13f; --accent2: #d99a2b; --line: #1d2a44; --err: #ff7a7a; }
+:root { --bg: #090d18; --card: #0f172a; --text: #eaeef7; --muted: #9fb0d0; --accent: #d4af6a; --accent2: #c19e5a; --line: #2a3a66; --err: #ff7a7a; }
 * { box-sizing: border-box; }
 /* Background: on Android Chrome/Brave the screen gets taller when the top bar hides, and a background painted
    on body (or html) stays at the old height until scrolling stops, leaving a white strip. So the page colour is
@@ -10,8 +10,10 @@
 html { background-color: var(--bg); color-scheme: dark; }
 body { margin: 0; color: var(--text); font: 17px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100lvh; z-index: -1; pointer-events: none;
-  background: radial-gradient(ellipse at top, #0f1c36 0%, transparent 55%) no-repeat; }
+  background: radial-gradient(ellipse at top, #14224a 0%, transparent 55%) no-repeat; }
 header { max-width: 720px; margin: 0 auto; padding: 16px 16px 8px; text-align: right; }
+/* Curtain stripe above the banner (matches the F-2b mockup). */
+header::before { content: ""; display: block; height: 16px; margin-bottom: 12px; border-radius: 10px 10px 0 0; border-bottom: 3px solid var(--accent); background: repeating-linear-gradient(90deg, #14224a 0 26px, #0d1836 26px 52px); }
 h1 { margin: 0; }
 h1 img { display: block; width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line); }
 h2 { font: 600 1.4rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: .02em; }
@@ -24,10 +26,10 @@ legend + * { clear: both; }
 label { display: block; padding: 6px 0; cursor: pointer; }
 label.disabled { opacity: .4; cursor: not-allowed; }
 input[type=checkbox], input[type=radio] { margin-right: 8px; accent-color: var(--accent); transform: scale(1.2); }
-input[type=text], input[type=email], textarea { width: 100%; background: #08101e; color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px; font: inherit; margin: 4px 0; }
+input[type=text], input[type=email], textarea { width: 100%; background: #0a1020; color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px; font: inherit; margin: 4px 0; }
 input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 textarea { min-height: 90px; resize: vertical; }
-button { background: linear-gradient(180deg, var(--accent), var(--accent2)); color: #1a1100; border: 0; border-radius: 12px; padding: 14px 28px; font: inherit; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 22px rgba(240, 177, 63, .28); }
+button { background: linear-gradient(180deg, var(--accent), var(--accent2)); color: #0a1020; border: 0; border-radius: 12px; padding: 14px 28px; font: inherit; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 22px rgba(212, 175, 106, .22); }
 button:hover:not(:disabled) { filter: brightness(1.08); }
 button:disabled { opacity: .5; cursor: default; box-shadow: none; }
 /* Quiet secondary button, used on the lab and admin pages. */
