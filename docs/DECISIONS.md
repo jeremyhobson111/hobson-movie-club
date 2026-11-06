@@ -94,3 +94,11 @@
 - **Decision:** Colours live as variables at the top of `css/style.css`. Full-width striped curtain header with a round logo (`img/logo-round.png`, gold outline drawn in CSS), flat sections with thin lines instead of boxed cards, serif text, gold buttons/checkboxes, centred movie page. App icons and favicon are the logo art without the gold ring, filling the square so phones can crop them. Invite/sign-in email files restyled to match.
 - **Alternatives considered:** Keeping the boxed-card look with new colours (rejected by the owner).
 - **Consequences:** The wide `banner.jpg` is no longer used on the site (emails no longer use it either). Email changes only take effect when pasted into Supabase.
+
+## DEC-013: IMDb and Rotten Tomatoes scores through MDBList (one read-only Edge Function)
+- **Date:** 2026-11-05
+- **Status:** accepted; function written and tested locally, not deployed yet.
+- **Context:** The owner wants IMDb, Rotten Tomatoes critic and Rotten Tomatoes audience scores on the movie card. TMDB has none of them. OMDb has IMDb and the critic score but no sign of the audience score.
+- **Decision:** New Edge Function `ratings` (verify_jwt on, signed-in members only) calls MDBList by TMDB id and returns `{ imdb, rtCritic, rtAudience, sources }`. `MDBLIST_API_KEY` is a Supabase secret. The free plan allows about 1,000 lookups a day, so browsers may cache a result for a day.
+- **Alternatives considered:** OMDb (no audience score found); scraping Rotten Tomatoes (rejected: against their terms, fragile).
+- **Consequences:** A fourth outside service. If MDBList is down or over its limit, the card just says it couldn't get the scores. The exact field names (`imdb`, `tomatoes`, `tomatoesaudience`) come from MDBList docs found secondhand; `sources` in the response shows the real names if any are wrong.

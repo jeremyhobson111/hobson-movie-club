@@ -31,6 +31,8 @@ const all = [parasite, cinema];
 
 export function mockCall(params) {
   // Pretend Seerr: Parasite is on Plex, anything else was never requested.
+  // Pretend MDBList: Parasite has all three scores, anything else only an IMDb score.
+  if (params.action === "ratings") return params.id === "496243" ? { imdb: 8.5, rtCritic: 99, rtAudience: 90 } : { imdb: 8.6, rtCritic: null, rtAudience: null };
   if (params.action === "plex") return params.id === "496243" ? { status: "available", plexUrl: null } : { status: "not_requested", plexUrl: null };
   if (params.action === "search") {
     const q = (params.q ?? "").toLowerCase();

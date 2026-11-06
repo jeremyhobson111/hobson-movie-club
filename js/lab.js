@@ -23,6 +23,14 @@ async function plexStatus(id) {
   return r.data;
 }
 
+// IMDb and Rotten Tomatoes scores (asks MDBList through our function; read-only).
+async function otherRatings(id) {
+  if (mock) return mockCall({ action: "ratings", id: String(id) });
+  const r = await api.callFunction(session, "ratings", { params: { id: String(id) } });
+  session = r.session;
+  return r.data;
+}
+
 const PLEX_TEXT = {
   available: "On Plex, ready to watch.",
   partial: "Only partly on Plex so far.",
@@ -131,6 +139,18 @@ function renderMovie(m, backQuery) {
     plexLine(h("p", {}, PLEX_TEXT[status] ?? "Unknown.", plexUrl ? [" ", ext(plexUrl, "Open in Plex")] : null));
   }).catch((e) => plexLine(h("p", { className: "muted", textContent: `Couldn't check Plex: ${e.message}` })));
 
+  // Same idea: filled in later, and a failure only shows a quiet note.
+  const ratingsLine = h("p", { className: "score muted", textContent: "Checking IMDb and Rotten Tomatoes…" });
+  otherRatings(m.id).then(({ imdb, rtCritic, rtAudience }) => {
+    const parts = [
+      imdb != null ? [h("strong", { textContent: imdb.toFixed(1) }), " IMDb"] : null,
+      rtCritic != null ? [h("strong", { textContent: `${rtCritic}%` }), " Rotten Tomatoes critics"] : null,
+      rtAudience != null ? [h("strong", { textContent: `${rtAudience}%` }), " audience"] : null,
+    ].filter(Boolean);
+    ratingsLine.className = "score";
+    ratingsLine.replaceChildren(...(parts.length ? parts.flatMap((p, i) => (i ? [" · ", ...p] : p)) : ["No IMDb or Rotten Tomatoes scores found."]));
+  }).catch((e) => { ratingsLine.textContent = `Couldn't get IMDb or Rotten Tomatoes scores: ${e.message}`; });
+
   const card = h("article", { className: "movie card" },
     m.backdrop ? h("img", { className: "backdrop", src: m.backdrop, alt: "" }) : null,
     h("div", { className: "movie-top" },
@@ -143,6 +163,7 @@ function renderMovie(m, backQuery) {
         m.rating ? h("p", { className: "score" },
           h("strong", { textContent: m.rating.toFixed(1) }), " / 10 on TMDB ",
           h("span", { className: "muted", textContent: `(${(m.rating / 2).toFixed(1)} of 5 · ${m.votes.toLocaleString()} votes)` })) : null,
+        ratingsLine,
         m.director.length ? h("p", {}, h("span", { className: "muted", textContent: "Directed by " }), m.director.join(", ")) : null,
         h("p", { className: "links" }, links))),
     m.overview ? h("p", { className: "overview", textContent: m.overview }) : null,
