@@ -24,7 +24,7 @@ h2::after { content: ""; display: block; width: 60px; height: 2px; background: v
 main { max-width: 720px; margin: 0 auto; padding: 0 16px 64px; }
 /* Not a boxed card: a plain section with a thin line above it (F-2b). */
 .card { border-top: 1px solid var(--line); padding: 18px 0; margin: 0; }
-fieldset.card { min-inline-size: 0; }
+fieldset.card { min-inline-size: 0; border: 0; border-top: 1px solid var(--line); margin: 0; }
 /* Floating the legend makes it sit inside the card instead of straddling the top border. */
 legend { float: left; width: 100%; padding: 0 0 10px; font-weight: 600; }
 legend + * { clear: both; }
