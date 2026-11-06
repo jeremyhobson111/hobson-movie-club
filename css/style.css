@@ -1,38 +1,54 @@
-/* Look borrowed from spotle.movie: deep navy, soft white text, gold glowing buttons.
+/* Look: "midnight blue and gold" (design option F-2b): deep navy, soft white text, gold buttons, a curtain stripe above the banner.
    Fonts: only stacks whose first choices exist on Windows, Mac, iOS and Android.
    Don't name a font that only exists on some devices (e.g. Impact is missing on phones);
    if we want a special font later, ship the font file in the repo instead. */
-:root { --bg: #060b14; --card: #0d1626; --text: #eaf0ff; --muted: #7f8bab; --accent: #f0b13f; --accent2: #d99a2b; --line: #1d2a44; --err: #ff7a7a; }
+:root { --bg: #090d18; --card: #0f172a; --text: #eaeef7; --muted: #9fb0d0; --accent: #d4af6a; --accent2: #c19e5a; --line: #2a3a66; --err: #ff7a7a; }
 * { box-sizing: border-box; }
 /* Background: on Android Chrome/Brave the screen gets taller when the top bar hides, and a background painted
    on body (or html) stays at the old height until scrolling stops, leaving a white strip. So the page colour is
    solid on html, and the glow is a fixed layer sized to the largest screen (lvh) so it already covers the taller view. */
 html { background-color: var(--bg); color-scheme: dark; }
-body { margin: 0; color: var(--text); font: 17px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+body { margin: 0; color: var(--text); font: 17px/1.55 Georgia, "Times New Roman", serif; }
+button, input, select, textarea, .hint { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 100%; height: 100lvh; z-index: -1; pointer-events: none;
-  background: radial-gradient(ellipse at top, #0f1c36 0%, transparent 55%) no-repeat; }
-header { max-width: 720px; margin: 0 auto; padding: 16px 16px 8px; text-align: right; }
+  background: radial-gradient(ellipse at top, #14224a 0%, transparent 55%) no-repeat; }
+/* Full-width curtain band at the top of every page (F-2b). */
+header { position: relative; margin: 0 0 8px; }
 h1 { margin: 0; }
-h1 img { display: block; width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line); }
-h2 { font: 600 1.4rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: .02em; }
+h1.curtain { background: repeating-linear-gradient(90deg, #14224a 0 26px, #0d1836 26px 52px); border-bottom: 3px solid var(--accent); padding: 14px 16px; }
+h1.curtain a { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--accent); text-decoration: none; }
+h1.curtain img { width: 72px; height: 72px; border-radius: 50%; border: 2px solid var(--accent); }
+h1.curtain span { font: 600 12px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: .34em; text-transform: uppercase; }
+h2 { font: italic 400 1.7rem/1.2 Georgia, "Times New Roman", serif; letter-spacing: .02em; text-align: center; margin: 22px 0 18px; }
+h2::after { content: ""; display: block; width: 60px; height: 2px; background: var(--accent); margin: 12px auto 0; }
 main { max-width: 720px; margin: 0 auto; padding: 0 16px 64px; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
-fieldset.card { min-inline-size: 0; }
+/* Not a boxed card: a plain section with a thin line above it (F-2b). */
+.card { border-top: 1px solid var(--line); padding: 18px 0; margin: 0; }
+fieldset.card { min-inline-size: 0; border: 0; border-top: 1px solid var(--line); margin: 0; }
 /* Floating the legend makes it sit inside the card instead of straddling the top border. */
 legend { float: left; width: 100%; padding: 0 0 10px; font-weight: 600; }
 legend + * { clear: both; }
 label { display: block; padding: 6px 0; cursor: pointer; }
 label.disabled { opacity: .4; cursor: not-allowed; }
-input[type=checkbox], input[type=radio] { margin-right: 8px; accent-color: var(--accent); transform: scale(1.2); }
-input[type=text], input[type=email], textarea { width: 100%; background: #08101e; color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px; font: inherit; margin: 4px 0; }
+/* Gold-outlined boxes and circles (F-2b); the gold fill with a dark tick shows when chosen. */
+input[type=checkbox], input[type=radio] { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; margin: 0 10px -4px 0; border: 1px solid var(--accent); background: transparent; display: inline-grid; place-content: center; cursor: pointer; }
+input[type=checkbox] { border-radius: 4px; }
+input[type=radio] { border-radius: 50%; }
+input[type=checkbox]::before, input[type=radio]::before { content: ""; width: 10px; height: 10px; background: var(--accent); transform: scale(0); transition: transform .1s; }
+input[type=checkbox]::before { clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0, 43% 62%); width: 12px; height: 12px; }
+input[type=radio]::before { border-radius: 50%; }
+input:checked::before { transform: scale(1); }
+input[type=checkbox]:checked, input[type=radio]:checked { background: transparent; }
+input[type=checkbox]:focus-visible, input[type=radio]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+input[type=text], input[type=email], textarea { width: 100%; background: #0a1020; color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px; font: inherit; margin: 4px 0; }
 input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 textarea { min-height: 90px; resize: vertical; }
-button { background: linear-gradient(180deg, var(--accent), var(--accent2)); color: #1a1100; border: 0; border-radius: 12px; padding: 14px 28px; font: inherit; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 22px rgba(240, 177, 63, .28); }
+button { background: var(--accent); color: #0a1020; border: 0; border-radius: 10px; padding: 15px 28px; font-size: 1rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
 button:hover:not(:disabled) { filter: brightness(1.08); }
 button:disabled { opacity: .5; cursor: default; box-shadow: none; }
 /* Quiet secondary button, used on the lab and admin pages. */
-button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); box-shadow: none; text-transform: none; letter-spacing: 0; font-weight: 500; padding: 8px 14px; margin-bottom: 14px; }
-#signout { margin-top: 10px; background: var(--card); color: var(--muted); border: 1px solid var(--line); box-shadow: none; padding: 8px 14px; font-size: .8rem; }
+button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); box-shadow: none; text-transform: none; letter-spacing: 0; font-weight: 500; padding: 8px 14px; margin-bottom: 14px; }
+#signout { position: absolute; top: 10px; right: 12px; margin: 0; background: rgba(9, 13, 24, .7); color: var(--muted); border: 1px solid var(--line); box-shadow: none; padding: 6px 12px; font-size: .75rem; }
 button.muted { background: transparent; box-shadow: none; text-transform: none; font-weight: 500; letter-spacing: 0; }
 .muted { color: var(--muted); }
 .error { color: var(--err); }
