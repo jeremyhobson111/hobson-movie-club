@@ -33,16 +33,30 @@ async function tmdb(path: string, params: Record<string, string>, token: string)
 }
 
 class HttpError extends Error {
-  constructor(public status: number, message: string) {
+  status: number;
+  constructor(status: number, message: string) {
     super(message);
+    this.status = status;
   }
 }
 
 const img = (path: string | null, size: string) => (path ? `${IMG}/${size}${path}` : null);
 const year = (date?: string) => (date ? date.slice(0, 4) : null);
 
-function shapeSearch(data: any) {
-  return (data.results ?? []).slice(0, 12).map((m: any) => ({
+// TMDB sorts by text match, so obscure films with a similar name can crowd out the famous one.
+// We look at two pages, then order by how many people rated each film (a good "is it well known?"
+// signal), with a boost when the title starts with what was typed. Films nobody rated sink.
+function rank(results: any[], q: string) {
+  const typed = q.trim().toLowerCase();
+  const seen = new Set<number>();
+  const score = (m: any) => (1 + (m.vote_count ?? 0)) * ((m.title ?? "").toLowerCase().startsWith(typed) ? 3 : 1);
+  return results
+    .filter((m) => !seen.has(m.id) && seen.add(m.id))
+    .sort((a, b) => score(b) - score(a));
+}
+
+function shapeSearch(results: any[]) {
+  return results.slice(0, 12).map((m: any) => ({
     id: m.id,
     title: m.title,
     year: year(m.release_date),
@@ -108,7 +122,10 @@ Deno.serve(async (req) => {
     if (action === "search") {
       const q = (url.searchParams.get("q") ?? "").trim().slice(0, 100);
       if (q.length < 2) return reply({ results: [] });
-      return reply({ results: shapeSearch(await tmdb("/search/movie", { query: q, include_adult: "false" }, token)) });
+      const ask = (page: number) => tmdb("/search/movie", { query: q, include_adult: "false", page: String(page) }, token);
+      // The second page is a bonus: if it fails, the first page still answers.
+      const pages = await Promise.all([ask(1), ask(2).catch(() => ({ results: [] }))]);
+      return reply({ results: shapeSearch(rank(pages.flatMap((p) => p.results ?? []), q)) });
     }
     if (action === "movie") {
       const id = url.searchParams.get("id") ?? "";
