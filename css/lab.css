@@ -31,7 +31,7 @@ h3 { font: 600 1.05rem/1.3 Georgia, "Times New Roman", serif; letter-spacing: .0
 @media (min-width: 600px) { .ratings { grid-template-columns: repeat(4, 1fr); } }
 .rating { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--text); text-decoration: none; }
 a.rating:hover { border-color: var(--accent); }
-.rating-icon svg { display: block; height: 30px; width: auto; }
+.rating-icon { display: block; height: 40px; width: auto; }
 .rating .num { font: 700 1.7rem/1 Georgia, "Times New Roman", serif; color: var(--accent); }
 .rating .label { font: .75rem/1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--muted); }
 .ratings-note { margin: 6px 0 0; font-size: .75rem; }
