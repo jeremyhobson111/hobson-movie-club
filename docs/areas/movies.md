@@ -3,7 +3,7 @@
 **Status:** test only. `lab.html` is an unlisted test page (noindex) to try designs before the club's rules are decided.
 
 ## Files
-- `supabase/functions/tmdb/index.ts`: the Edge Function (search + movie details). Secret `TMDB_READ_TOKEN`. See DEC-004. Search looks at two TMDB pages and re-orders by how many people rated each film (x3 if the title starts with what was typed), so famous films beat obscure look-alikes. Check it with `node --experimental-strip-types --no-warnings tests/tmdb-search.check.mjs` (not in CI yet).
+- `supabase/functions/tmdb/index.ts`: the Edge Function (search + movie details). Secret `TMDB_READ_TOKEN`. See DEC-004. Search looks at two TMDB pages and re-orders by how many people rated each film (x3 if the title starts with what was typed), so famous films beat obscure look-alikes. Check it with `node --experimental-strip-types --no-warnings tests/tmdb-search.check.mjs`. Runs in CI.
 - `supabase/functions/ratings/index.ts`: read-only IMDb and Rotten Tomatoes (critic + audience) scores via MDBList. Secret `MDBLIST_API_KEY`. See DEC-013. Check it with `node --experimental-strip-types --no-warnings tests/ratings.check.mjs`. The response lists the rating names MDBList sent (`sources`), to catch a wrong guess about a name.
 - `supabase/functions/seerr/index.ts`: read-only "is it on Plex?" check against the owner's Seerr. Secrets `SEERR_URL`, `SEERR_API_KEY`. See DEC-011. Check it with `node --experimental-strip-types --no-warnings tests/seerr.check.mjs`.
 - `lab.html`, `js/lab.js`, `css/lab.css`: search, movie card, review section. `js/lab-mock.js` + `lab.html?mock=1` shows it with sample data and no login or key.
