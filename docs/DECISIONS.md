@@ -86,3 +86,11 @@
 - **Decision:** New Edge Function `seerr` (verify_jwt on, signed-in members only) calls `GET /api/v1/movie/<tmdb id>` on the owner's Seerr and returns only `{ status, plexUrl }`. `SEERR_URL` and `SEERR_API_KEY` are Supabase secrets, never in the browser. It never requests anything. The movie card on the lab page shows the result.
 - **Alternatives considered:** Calling Seerr from the browser (rejected: would expose the API key); asking TMDB (it does not know about Plex).
 - **Consequences:** If the owner's server is off, the card says it couldn't check, and nothing else breaks. Requesting a movie (owner only) is a later, separate step.
+
+## DEC-012: Site look is "midnight blue and gold" (design F-2b)
+- **Date:** 2026-11-05
+- **Status:** accepted
+- **Context:** The owner compared eight looks (and colour variants) as mockups and chose F-2b: the velvet-curtain layout in midnight blue with gold trim.
+- **Decision:** Colours live as variables at the top of `css/style.css`. Full-width striped curtain header with a round logo (`img/logo-round.png`, gold outline drawn in CSS), flat sections with thin lines instead of boxed cards, serif text, gold buttons/checkboxes, centred movie page. App icons and favicon are the logo art without the gold ring, filling the square so phones can crop them. Invite/sign-in email files restyled to match.
+- **Alternatives considered:** Keeping the boxed-card look with new colours (rejected by the owner).
+- **Consequences:** The wide `banner.jpg` is no longer used on the site (emails no longer use it either). Email changes only take effect when pasted into Supabase.

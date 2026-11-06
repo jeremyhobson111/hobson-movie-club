@@ -1,5 +1,5 @@
 # Current state
-**Last updated:** 2026-11-04
+**Last updated:** 2026-11-05
 **Current focus:** Decide how a club "round" works (pick, deadline, reviews, points) so notifications and reminders have something to attach to.
 
 ## Done (recent sessions)
@@ -11,6 +11,7 @@
 - TMDB lookup works through a Supabase function (DEC-004); lab page (`lab.html`) has search, movie card, and a browser-only review preview.
 - CI now runs the project tests; daily keep-alive stops Supabase pausing (DEC-005). Webhook secret rotated. `.env.example` lists secret names.
 
+- New look (midnight blue and gold, design F-2b) is live: curtain header, flat sections, ringless app icons (DEC-012).
 - Seerr (the renamed Overseerr) status check is live: `seerr` function deployed, secrets `SEERR_URL` and `SEERR_API_KEY` set, "On our Plex?" line on the lab movie card, tried against the real Seerr (DEC-011).
 
 ## In progress
