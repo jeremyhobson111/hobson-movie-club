@@ -51,6 +51,12 @@ function realStore(session) {
       session = r.session;
       return r.data;
     },
+    // Sends the invite email and confirms the account (the function checks we are an admin).
+    async invite(email) {
+      const r = await api.callFunction(session, "invite", { method: "POST", body: { email } });
+      session = r.session;
+      return r.data;
+    },
     removePlex: (id) => call(`plex_accounts?id=eq.${id}`, { method: "DELETE" }),
     renameMember: (user_id, display_name) => call(`members?user_id=eq.${user_id}`, { method: "PATCH", body: { display_name } }),
   };
@@ -85,6 +91,7 @@ function mockStore() {
       db.plex.push(row);
       return { ...row };
     },
+    async invite(email) { return { ok: true, email: email.trim().toLowerCase() }; },
     async removePlex(id) { db.plex = db.plex.filter((p) => p.id !== id); },
     async renameMember(user_id, name) { db.members.find((m) => m.user_id === user_id).display_name = name; },
   };
@@ -185,11 +192,37 @@ function memberCard(row, store, data, redraw) {
     form, msg);
 }
 
+// New members: type an email, they get the invite and can sign in right away at the site.
+function inviteCard(store) {
+  const email = h("input", { type: "email", placeholder: "their email address", maxLength: 254, required: true, ariaLabel: "Email to invite" });
+  const send = h("button", { type: "submit", textContent: "Send invite" });
+  const msg = h("p", { className: "hint" });
+  const form = h("form", { className: "plex-add" }, email, send);
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    msg.className = "hint";
+    msg.textContent = "Sending…";
+    send.disabled = true;
+    try {
+      const r = await store.invite(email.value);
+      msg.textContent = `Invited ${r.email}. They can also go straight to the site and sign in with that email.`;
+      email.value = "";
+    } catch (err) {
+      msg.className = "error";
+      msg.textContent = err.message || "Couldn't send the invite.";
+    }
+    send.disabled = false;
+  };
+  return card(h("p", { className: "q-title", textContent: "Invite a member" }), form, msg);
+}
+
 function membersView(store, data) {
   const box = h("div");
+  const invite = inviteCard(store);
   const redraw = () => {
     const rows = memberRows(data.members, data.survey, data.plex);
     box.replaceChildren(
+      invite,
       h("p", { className: "hint", textContent: `${rows.length} ${rows.length === 1 ? "member" : "members"}. Link every Plex account a member watches on. Best is the Plex ID (the number shown on the Plex activity tab); without one, alerts are matched by the Plex name, ignoring upper/lower case. Two people who share one account each get it linked, and a finished movie there alerts both.` }),
       ...rows.map((r) => memberCard(r, store, data, redraw)));
   };
