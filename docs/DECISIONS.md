@@ -105,7 +105,7 @@
 
 ## DEC-014: Admin invites create an already-confirmed account (Edge Function `invite`)
 - **Date:** 2026-11-06
-- **Status:** accepted; function not deployed yet (needs the owner's OK)
+- **Status:** accepted. Function `invite` deployed (v2) and the admin box merged in #41. Not yet tried against the real Supabase from the admin page (only tested with a fake one); the owner is to try one invite to an address they control.
 - **Context:** Six of fourteen invited people could not sign in. A dashboard invite leaves the account unconfirmed until the emailed link is clicked, and Supabase refuses the normal sign-in email for an unconfirmed account while public sign-ups are off ("Signups not allowed for this instance"). Links expire or get used up by mail apps. The six were fixed by hand in the database (2026-11-06).
 - **Decision:** New Edge Function `invite` (verify_jwt on, admins only, checked as the caller). It sends the invite email, then marks the account confirmed with the service key (built-in secret, no new secrets). The admin page's Members & Plex tab has an "Invite a member" box. The invite email also says to just sign in at the site.
 - **Alternatives considered:** Keep dashboard invites and confirm by hand (rejected: easy to forget, needs the database); turn on public sign-ups (rejected: breaks invite-only).
